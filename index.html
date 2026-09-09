@@ -1,0 +1,1260 @@
+<meta charset="UTF-8">
+<title>Checkatrade Work Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    /* ---- primitives (Checkatrade Design System tokens/colors.css) ---- */
+    --color-grey-0:#ffffff; --color-grey-50:#f7f8fa; --color-grey-100:#eef1f5; --color-grey-200:#dde2e8;
+    --color-grey-300:#c7ced7; --color-grey-400:#9aa4b2; --color-grey-500:#707b8a; --color-grey-600:#525c6a;
+    --color-grey-700:#3a4250; --color-grey-800:#262c37; --color-grey-900:#171b22;
+    --color-crimson-50:#fdeaee; --color-crimson-100:#f9c3cd; --color-crimson-400:#d10a38; --color-crimson-500:#a10429;
+    --color-blue-50:#eaf2fa; --color-blue-100:#cfe1f2; --color-blue-400:#0167ff; --color-blue-500:#0158a2; --color-blue-600:#043d73;
+    /* ---- semantic (tokens/colors.css) ---- */
+    --color-background-surface-neutral-default:var(--color-grey-0);
+    --color-background-surface-neutral-soft:var(--color-grey-50);
+    --color-background-surface-neutral-strong:var(--color-grey-900);
+    --color-background-surface-brand-primary-soft:#eef2fb;
+    --color-background-action-brand-primary:var(--color-blue-500);
+    --color-background-action-brand-primary-hover:var(--color-blue-600);
+    --color-background-action-brand-secondary:var(--color-crimson-400);
+    --color-background-action-brand-secondary-hover:var(--color-crimson-500);
+    --color-ink-body-default:var(--color-grey-900);
+    --color-ink-body-default-inverse:var(--color-grey-0);
+    --color-ink-body-subtle:var(--color-grey-600);
+    --color-ink-body-brand:var(--color-blue-500);
+    --color-border-default:var(--color-grey-200);
+    --color-border-strong:var(--color-grey-400);
+    --color-border-action-brand-secondary:var(--color-blue-500);
+    --color-background-surface-feedback-success:#e7f6ec;
+    --color-background-surface-feedback-warning:#fff6e0;
+    --color-background-surface-feedback-error:var(--color-crimson-50);
+    --color-background-surface-feedback-information:var(--color-blue-50);
+    --color-ink-feedback-success:#1c7a3c;
+    --color-ink-feedback-warning:#8a5a00;
+    --color-ink-feedback-error:var(--color-crimson-400);
+    --color-ink-feedback-information:var(--color-blue-500);
+    --color-focus-ring:var(--color-blue-400);
+    /* ---- type (tokens/typography.css + fonts.css) ---- */
+    --font-headline:'Plus Jakarta Sans',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --typography-headline-font-size-lg:40px; --typography-headline-line-height-lg:48px;
+    --typography-headline-font-size-md:32px; --typography-headline-line-height-md:40px;
+    --typography-headline-font-size-sm:24px; --typography-headline-line-height-sm:32px;
+    --typography-header-font-size-xl:28px; --typography-header-line-height-xl:36px;
+    --typography-header-font-size-lg:24px; --typography-header-line-height-lg:32px;
+    --typography-header-font-size-md:20px; --typography-header-line-height-md:28px;
+    --typography-body-font-size-xl:18px; --typography-body-line-height-xl:28px;
+    --typography-body-font-size-lg:16px; --typography-body-line-height-lg:24px;
+    --typography-body-font-size-md:14px; --typography-body-line-height-md:20px;
+    --typography-body-font-size-sm:13px; --typography-body-line-height-sm:18px;
+    --typography-body-font-size-xs:12px;
+    --typography-label-font-size-action-lg:16px; --typography-label-font-size-action-md:14px; --typography-label-font-size-action-sm:13px;
+    /* ---- spacing (tokens/spacing.css) ---- */
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px;
+    /* ---- effects (tokens/effects.css) ---- */
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px; --radius-pill:999px;
+    --shadow-card:0 1px 2px rgba(23,27,34,0.06), 0 4px 12px rgba(23,27,34,0.06);
+    --shadow-card-raised:0 2px 4px rgba(23,27,34,0.08), 0 12px 24px rgba(23,27,34,0.10);
+    --shadow-focus:0 0 0 3px rgba(1,103,255,0.25);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--color-background-surface-neutral-default);color:var(--color-ink-body-default);font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:var(--font-body);font-weight:700;margin:0;color:var(--color-ink-body-default);text-wrap:balance;}
+  p{margin:0;}
+  a{color:var(--color-ink-body-brand);text-decoration:none;}
+  a:hover{color:var(--color-background-action-brand-primary-hover);}
+  button{font-family:inherit;}
+  :focus-visible{outline:none;box-shadow:var(--shadow-focus);border-radius:4px;}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+
+  /* ---- Topbar (real product header pattern: logo left, contact right, 3px brand-blue rule) ---- */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:var(--space-5) var(--space-10);border-bottom:3px solid var(--color-blue-500);flex-wrap:wrap;gap:var(--space-3);}
+  .topbar img.logo{height:30px;display:block;}
+  .topbar .contact{text-align:right;font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-default);line-height:1.5;}
+  .topbar .contact a{color:var(--color-blue-500);font-weight:700;}
+  .topbar .app-right{display:flex;align-items:center;gap:var(--space-3);}
+  .biz-pill{display:flex;align-items:center;gap:var(--space-2);background:var(--color-background-surface-neutral-soft);border:1px solid var(--color-border-default);padding:6px 14px 6px 6px;border-radius:var(--radius-pill);font-size:var(--typography-body-font-size-md);}
+  .biz-avatar{width:26px;height:26px;border-radius:50%;background:var(--color-blue-500);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--typography-body-font-size-xs);font-weight:700;}
+  .plan-tag{font-size:var(--typography-body-font-size-xs);font-weight:700;background:var(--color-background-surface-feedback-success);color:var(--color-ink-feedback-success);padding:4px 10px;border-radius:var(--radius-pill);}
+
+  /* ---- Step indicator (StepIndicator.jsx, faithful) ---- */
+  .step-indicator{background:var(--color-background-surface-brand-primary-soft);padding:var(--space-8) var(--space-10);display:flex;gap:var(--space-8);overflow-x:auto;}
+  .step-indicator .step{flex:1;min-width:110px;}
+  .step-indicator .step .lbl{font-weight:700;font-size:var(--typography-body-font-size-md);margin-bottom:8px;color:var(--color-ink-body-subtle);white-space:nowrap;}
+  .step-indicator .step.active .lbl,.step-indicator .step.done .lbl{color:var(--color-ink-body-default);}
+  .step-indicator .step .track{height:6px;border-radius:var(--radius-pill);background:var(--color-grey-200);}
+  .step-indicator .step.active .track,.step-indicator .step.done .track{background:var(--color-blue-500);}
+
+  /* ---- Disclaimer ---- */
+  .disclaimer{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-10);background:var(--color-background-surface-feedback-information);font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);}
+  .disclaimer b{font-weight:700;}
+  .disclaimer svg{flex:none;color:var(--color-ink-feedback-information);}
+  .disclaimer-x{margin-left:auto;background:none;border:none;color:var(--color-ink-body-subtle);cursor:pointer;font-size:var(--typography-body-font-size-lg);line-height:1;padding:8px;border-radius:6px;flex:none;}
+  .disclaimer-x:hover{background:rgba(1,88,162,.08);}
+
+  .wrap{max-width:780px;margin:0 auto;padding:var(--space-10) var(--space-6) 88px;}
+  .wrap.wide{max-width:1080px;}
+  @media (max-width:640px){ .topbar{padding:var(--space-4) var(--space-5);} .step-indicator{padding:var(--space-6) var(--space-5);} .wrap{padding:var(--space-6) var(--space-4) 64px;} }
+
+  h1.page-h{font-size:var(--typography-header-font-size-xl);line-height:var(--typography-header-line-height-xl);margin-bottom:var(--space-2);}
+  .eyebrow{font-size:var(--typography-body-font-size-sm);font-weight:700;color:var(--color-ink-body-subtle);margin-bottom:var(--space-2);}
+  .lede{color:var(--color-ink-body-subtle);font-size:var(--typography-body-font-size-lg);line-height:1.6;max-width:60ch;}
+  /* ---- Standard question/section title (consistent across onboarding + Work Plan) ---- */
+  .qtitle{font-size:var(--typography-body-font-size-lg);font-weight:700;color:var(--color-ink-body-default);margin-bottom:var(--space-3);}
+  .qgroup{display:flex;flex-direction:column;gap:var(--space-8);margin-top:var(--space-8);max-width:520px;}
+
+  /* ---- Buttons (Button.jsx, faithful) ---- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-body);font-weight:700;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;white-space:nowrap;transition:background .12s ease,transform .08s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-sm{padding:8px 14px;font-size:var(--typography-label-font-size-action-sm);}
+  .btn-md{padding:12px 20px;font-size:var(--typography-label-font-size-action-md);}
+  .btn-lg{padding:16px 24px;font-size:var(--typography-label-font-size-action-lg);}
+  .btn-primary{background:var(--color-background-action-brand-secondary);color:#fff;}
+  .btn-primary:hover{background:var(--color-background-action-brand-secondary-hover);}
+  .btn-secondary{background:var(--color-background-action-brand-primary);color:#fff;}
+  .btn-secondary:hover{background:var(--color-background-action-brand-primary-hover);}
+  .btn-outline{background:#fff;color:var(--color-ink-body-brand);border-color:var(--color-border-default);}
+  .btn-outline:hover{border-color:var(--color-border-strong);}
+  .btn-ghost{background:transparent;color:var(--color-ink-body-brand);}
+  .btn-ghost:hover{background:var(--color-background-surface-brand-primary-soft);}
+  .btn[disabled]{opacity:.55;cursor:not-allowed;}
+  .btn-block{width:100%;}
+
+  /* ---- Inputs (Input.jsx) ---- */
+  .field{display:flex;flex-direction:column;gap:6px;font-size:var(--typography-body-font-size-sm);font-weight:700;color:var(--color-ink-body-default);}
+  .field .inputwrap{position:relative;}
+  .field input[type=text],.field input[type=email],.field input[type=tel],.field input[type=password]{
+    width:100%;font-family:var(--font-body);font-weight:400;font-size:var(--typography-body-font-size-lg);color:var(--color-ink-body-default);
+    padding:14px 16px;border:1px solid var(--color-border-default);border-radius:var(--radius-md);outline:none;background:#fff;
+  }
+  .field input:focus{border-color:var(--color-blue-400);}
+  .field .validok{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--color-ink-feedback-success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--typography-body-font-size-xs);}
+  .checkrow{display:flex;align-items:flex-start;gap:9px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);font-weight:400;}
+  .checkrow input{margin-top:3px;}
+
+  /* ---- Checkbox rows (Checkbox.jsx) ---- */
+  .cb-row{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);cursor:pointer;border:1px solid var(--color-border-default);border-radius:var(--radius-md);font-size:var(--typography-body-font-size-lg);color:var(--color-ink-body-default);background:#fff;}
+  .cb-swatch{width:22px;height:22px;border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:var(--typography-body-font-size-sm);border:1px solid var(--color-border-strong);background:#fff;}
+  .cb-row.on .cb-swatch{background:var(--color-background-action-brand-primary);border:none;}
+
+  /* ---- Radio cards (RadioCard.jsx) ---- */
+  .radiocard{display:flex;align-items:center;gap:var(--space-3);width:100%;text-align:left;padding:var(--space-4);cursor:pointer;background:#fff;border:1px solid var(--color-border-default);border-radius:var(--radius-md);}
+  .radiocard.on{border-color:var(--color-border-action-brand-secondary);}
+  .radiocard .dot{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid var(--color-border-strong);display:flex;align-items:center;justify-content:center;}
+  .radiocard.on .dot{border-color:var(--color-blue-400);}
+  .radiocard.on .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--color-blue-400);}
+  .radiocard .lbl{font-weight:600;font-size:var(--typography-body-font-size-lg);color:var(--color-ink-body-default);}
+  .radiocard.on .lbl{color:var(--color-blue-500);}
+  .radiocard .lblwrap{display:flex;flex-direction:column;gap:2px;}
+  .radiocard .sub{font-weight:400;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);}
+  .radiocard .ic{width:36px;height:36px;border-radius:8px;background:var(--color-blue-50);display:flex;align-items:center;justify-content:center;flex:none;color:var(--color-blue-500);}
+  .stack{display:flex;flex-direction:column;gap:var(--space-3);}
+
+  /* ---- Slider (Slider.jsx) ---- */
+  .cs-slider{padding:4px 8px;}
+  .cs-slider .track{position:relative;height:4px;background:var(--color-border-default);border-radius:var(--radius-pill);margin:14px 0;}
+  .cs-slider .fill{position:absolute;left:0;top:0;height:4px;background:var(--color-blue-500);border-radius:var(--radius-pill);}
+  .cs-slider .dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--color-border-strong);cursor:pointer;padding:0;}
+  .cs-slider .dot.on{background:var(--color-blue-500);border-color:var(--color-blue-500);}
+  .cs-slider .labels{display:flex;justify-content:space-between;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);}
+
+  /* ---- Postcode district chips ---- */
+
+  /* ---- Badge (Badge.jsx) ---- */
+  .badge{display:inline-flex;align-self:flex-start;align-items:center;gap:5px;padding:6px 16px;border-radius:var(--radius-pill);font-weight:700;font-size:var(--typography-label-font-size-action-sm);width:fit-content;}
+  .badge-brand{background:var(--color-blue-500);color:#fff;}
+  .badge-neutral{background:var(--color-grey-100);color:var(--color-ink-body-default);}
+
+  /* ---- Card (Card.jsx) ---- */
+  .card{background:#fff;border-radius:var(--radius-lg);padding:var(--space-6);border:1px solid var(--color-border-default);box-shadow:var(--shadow-card);position:relative;}
+  .card.highlighted{border:2px solid var(--color-blue-500);box-shadow:var(--shadow-card-raised);}
+  .card.soft{background:var(--color-background-surface-neutral-soft);box-shadow:none;}
+
+  .grid{display:grid;gap:var(--space-4);}
+  .grid > *{min-width:0;}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-auto{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+  .kpi-grid .kpi{min-width:0;}
+  .kpi .value{overflow-wrap:break-word;}
+  @media (max-width:800px){ .grid-2,.grid-3{grid-template-columns:1fr;} }
+
+  .stepfoot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-10);padding-top:var(--space-6);border-top:1px solid var(--color-border-default);gap:12px;flex-wrap:wrap;}
+
+  /* ---- Screen 1: Account (marketing-weight hero uses Headline scale) ---- */
+  .split{display:grid;grid-template-columns:1fr 1.1fr;gap:0;margin:calc(-1 * var(--space-10)) calc(-1 * var(--space-6));min-height:560px;}
+  @media (max-width:800px){ .split{grid-template-columns:1fr;margin:calc(-1 * var(--space-6)) calc(-1 * var(--space-4));} }
+  .brandpane{background:var(--color-background-surface-neutral-strong);color:#fff;padding:var(--space-12) var(--space-8);display:flex;flex-direction:column;justify-content:space-between;}
+  .brandpane h1{font-family:var(--font-headline);font-weight:800;font-size:var(--typography-headline-font-size-md);line-height:var(--typography-headline-line-height-md);color:#fff;}
+  .brandpane .tagline{color:rgba(255,255,255,.72);font-size:var(--typography-body-font-size-lg);margin-top:var(--space-4);max-width:34ch;line-height:1.6;}
+  .brandpane .feat{display:flex;gap:11px;align-items:flex-start;margin-top:var(--space-4);font-size:var(--typography-body-font-size-md);color:rgba(255,255,255,.85);}
+  .brandpane .feat svg{flex:none;margin-top:2px;color:var(--color-blue-400);}
+  .brandpane .logo-plate{display:inline-block;background:#fff;padding:8px 14px;border-radius:var(--radius-md);}
+  .brandpane .logo-plate img.logo{height:22px;display:block;}
+  .formpane{padding:var(--space-12) var(--space-8);display:flex;flex-direction:column;justify-content:center;}
+  .formpane form{display:flex;flex-direction:column;gap:var(--space-4);max-width:400px;}
+
+  /* ---- Demand cards ---- */
+  .banner-strip{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;background:var(--color-background-surface-feedback-information);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-6);}
+  .banner-strip .big{font-weight:800;font-size:var(--typography-header-font-size-md);font-family:var(--font-headline);color:var(--color-blue-500);}
+  .demandcard{position:relative;border:1px solid var(--color-border-default);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-card);display:flex;flex-direction:column;}
+  .dc-body{padding:var(--space-4);}
+  .dc-type{font-weight:700;font-size:var(--typography-body-font-size-lg);}
+  .dc-meta{font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:3px;}
+  .dc-snip{font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:9px;line-height:1.5;}
+  .dc-valuerow{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;padding-top:10px;border-top:1px solid var(--color-border-default);}
+  .dc-valuelabel{font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);}
+  .dc-valueamt{font-weight:700;font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-default);}
+  .dc-redact{background:var(--color-background-surface-neutral-soft);border-top:1px solid var(--color-border-default);padding:var(--space-4);display:flex;flex-direction:column;gap:8px;}
+  .dc-redact-label{font-size:var(--typography-body-font-size-xs);font-weight:700;color:var(--color-ink-body-subtle);}
+  .dc-bar{height:9px;border-radius:3px;background:repeating-linear-gradient(135deg,var(--color-grey-300),var(--color-grey-300) 4px,var(--color-grey-200) 4px,var(--color-grey-200) 8px);}
+  .dc-lockrow{display:flex;align-items:center;gap:6px;font-size:var(--typography-body-font-size-xs);font-weight:700;color:var(--color-ink-body-subtle);margin-top:2px;}
+
+  /* ---- Plan cards (matches ui_kits/trade-signup plan-card) ---- */
+  .plancard{border:1px solid var(--color-border-default);border-radius:var(--radius-lg);padding:var(--space-5);background:#fff;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:8px;}
+  .plancard.chosen{border:2px solid var(--color-blue-500);box-shadow:var(--shadow-card-raised);}
+  .plan-price{font-size:var(--typography-headline-font-size-sm);line-height:var(--typography-headline-line-height-sm);font-weight:800;font-family:var(--font-headline);}
+  .plan-price small{font-family:var(--font-body);font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);font-weight:400;}
+
+  /* ---- Options ---- */
+  .optioncard{border:1px solid var(--color-border-default);border-radius:var(--radius-lg);padding:var(--space-5);background:#fff;display:flex;flex-direction:column;gap:var(--space-3);}
+  .optioncard.muted{background:var(--color-background-surface-neutral-soft);}
+  .opt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .opt-price{font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-subtle);}
+  .toggle{position:relative;width:44px;height:26px;border-radius:var(--radius-pill);background:var(--color-border-strong);border:none;cursor:pointer;flex:none;}
+  .toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s;box-shadow:var(--shadow-card);}
+  .toggle.on{background:var(--color-blue-500);}
+  .toggle.on::after{left:21px;}
+
+  /* ---- Payment ---- */
+  .line-item{display:flex;justify-content:space-between;font-size:var(--typography-body-font-size-md);padding:9px 0;border-bottom:1px solid var(--color-border-default);color:var(--color-ink-body-subtle);}
+  .line-item.total{border-bottom:none;padding-top:var(--space-3);font-weight:700;color:var(--color-ink-body-default);font-size:var(--typography-body-font-size-lg);}
+  .fakenote{display:flex;gap:10px;background:var(--color-background-surface-feedback-warning);color:var(--color-ink-feedback-warning);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);font-size:var(--typography-body-font-size-sm);line-height:1.5;}
+
+  /* ---- Work Plan ---- */
+  .kpi{border:1px solid var(--color-border-default);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);background:#fff;}
+  .kpi .label{font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);font-weight:700;}
+  .kpi .value{font-size:var(--typography-headline-font-size-sm);line-height:var(--typography-headline-line-height-sm);font-weight:800;font-family:var(--font-headline);margin-top:6px;font-variant-numeric:tabular-nums;}
+  .kpi .cmp{font-size:var(--typography-body-font-size-xs);margin-top:5px;color:var(--color-ink-body-subtle);}
+  .kpi .cmp.good{color:var(--color-ink-feedback-success);}
+  .kpi .cmp.bad{color:var(--color-ink-feedback-error);}
+
+  .recbanner{border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);margin:var(--space-6) 0;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .recbanner.tone-success{background:var(--color-background-surface-feedback-success);}
+  .recbanner.tone-warning{background:var(--color-background-surface-feedback-warning);}
+  .recbanner.tone-information{background:var(--color-background-surface-feedback-information);}
+  .recbanner-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;}
+  .tone-success .recbanner-icon{background:var(--color-ink-feedback-success);}
+  .tone-warning .recbanner-icon{background:#8a5a00;}
+  .tone-information .recbanner-icon{background:var(--color-blue-500);}
+  .recbanner h2{font-size:var(--typography-header-font-size-md);}
+  .recbanner p{font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-subtle);margin-top:4px;line-height:1.5;}
+  .recbanner .btn{margin-left:auto;flex:none;}
+
+  .funnel{display:flex;flex-direction:column;gap:9px;margin-top:6px;}
+  .funnel-row{display:flex;align-items:center;gap:12px;font-size:var(--typography-body-font-size-sm);}
+  .funnel-label{width:92px;flex:none;color:var(--color-ink-body-subtle);}
+  .funnel-track{flex:1;height:16px;background:var(--color-background-surface-neutral-soft);border-radius:6px;overflow:hidden;}
+  .funnel-fill{height:100%;border-radius:6px;}
+  .funnel-count{width:44px;flex:none;text-align:right;font-weight:700;}
+
+  .feedlist{display:flex;flex-direction:column;border:1px solid var(--color-border-default);border-radius:var(--radius-lg);overflow:hidden;}
+  .feedrow{display:flex;align-items:center;gap:12px;padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border-default);font-size:var(--typography-body-font-size-md);}
+  .feedrow:last-child{border-bottom:none;}
+  .feedrow .ft{font-weight:600;flex:1;min-width:0;}
+  .feedrow .fm{color:var(--color-ink-body-subtle);font-size:var(--typography-body-font-size-xs);}
+  .status{font-size:var(--typography-body-font-size-xs);font-weight:700;padding:3px 10px;border-radius:var(--radius-pill);flex:none;}
+  .status-won{background:var(--color-background-surface-feedback-success);color:var(--color-ink-feedback-success);}
+  .status-lost{background:var(--color-grey-100);color:var(--color-ink-body-subtle);}
+  .status-none{background:var(--color-background-surface-feedback-error);color:var(--color-ink-feedback-error);}
+
+  .democontrols{position:sticky;bottom:16px;margin-top:var(--space-6);margin-left:auto;width:fit-content;border:1.5px dashed var(--color-blue-400);border-radius:var(--radius-lg);background:#fff;padding:var(--space-3) var(--space-4);box-shadow:var(--shadow-card-raised);}
+  .democontrols .dc-label{font-size:var(--typography-body-font-size-xs);font-weight:700;color:var(--color-blue-500);margin-bottom:8px;}
+  .segmented{display:flex;gap:4px;background:var(--color-background-surface-neutral-soft);padding:3px;border-radius:var(--radius-md);}
+  .seg{padding:6px 12px;border-radius:6px;border:none;background:none;font-size:var(--typography-body-font-size-xs);font-weight:700;color:var(--color-ink-body-subtle);cursor:pointer;}
+  .seg.on{background:#fff;color:var(--color-ink-body-default);box-shadow:var(--shadow-card);}
+
+  /* ---- Slide-over ---- */
+  .overlay{position:fixed;inset:0;background:rgba(10,12,16,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .18s ease;}
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .slideover{position:fixed;top:0;right:-460px;bottom:0;width:440px;max-width:92vw;background:#fff;z-index:41;box-shadow:var(--shadow-card-raised);display:flex;flex-direction:column;transition:right .22s ease;}
+  .slideover.show{right:0;}
+  .so-head{padding:var(--space-6) var(--space-6) var(--space-4);border-bottom:1px solid var(--color-border-default);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .so-close{background:none;border:none;color:var(--color-ink-body-subtle);cursor:pointer;font-size:var(--typography-header-font-size-md);padding:8px;}
+  .so-body{padding:var(--space-5) var(--space-6);overflow-y:auto;overflow-x:hidden;flex:1;display:flex;flex-direction:column;gap:var(--space-6);}
+  .so-section .st{font-size:var(--typography-body-font-size-xs);font-weight:700;color:var(--color-ink-body-subtle);margin-bottom:9px;}
+  .evidence-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+  .evidence-list li{display:flex;justify-content:space-between;gap:10px;font-size:var(--typography-body-font-size-sm);padding:9px 11px;background:var(--color-background-surface-neutral-soft);border-radius:var(--radius-md);}
+  .evidence-list .ev-k{min-width:0;}
+  .evidence-list .ev-v{font-weight:700;text-align:right;min-width:0;}
+  .confmeter{display:flex;gap:4px;margin-top:8px;}
+  .confmeter i{width:26px;height:7px;border-radius:4px;background:var(--color-grey-200);}
+  .confmeter i.on{background:var(--color-blue-500);}
+  .so-foot{padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border-default);background:var(--color-background-surface-neutral-soft);font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);text-align:center;font-weight:700;}
+  .altbtn{width:100%;text-align:left;display:flex;flex-direction:column;gap:2px;padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);border:1px solid var(--color-border-strong);background:#fff;cursor:pointer;font-size:var(--typography-body-font-size-md);font-weight:700;color:var(--color-ink-body-default);}
+  .altbtn:hover{border-color:var(--color-blue-400);}
+  .altbtn .d{font-weight:400;color:var(--color-ink-body-subtle);font-size:var(--typography-body-font-size-sm);}
+  .altbtn.primary{background:var(--color-background-action-brand-secondary);color:#fff;border-color:transparent;}
+  .altbtn.primary .d{color:rgba(255,255,255,.78);}
+  .altbtn.primary:hover{background:var(--color-background-action-brand-secondary-hover);}
+  .altbtn.done{background:var(--color-background-surface-feedback-success);border-color:transparent;color:var(--color-ink-feedback-success);cursor:default;}
+  .altbtn[disabled]{opacity:.75;cursor:default;}
+  .altstack{display:flex;flex-direction:column;gap:8px;}
+  .ff-box{border:1px dashed var(--color-blue-400);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:var(--color-background-surface-feedback-information);font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);display:flex;flex-direction:column;gap:8px;}
+
+  /* ---- Footer ---- */
+  .sitefooter{border-top:1px solid var(--color-border-default);padding:var(--space-6);text-align:center;font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);line-height:1.7;}
+  .sitefooter p{margin-top:4px;}
+
+  /* ---- Toasts ---- */
+  .toastregion{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;}
+  .toast{background:var(--color-grey-900);color:#fff;padding:11px 18px;border-radius:var(--radius-md);font-size:var(--typography-body-font-size-md);font-weight:600;box-shadow:var(--shadow-card-raised);display:flex;align-items:center;gap:9px;animation:toastin .18s ease;}
+  @keyframes toastin{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .center-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 20px;}
+  .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--color-border-default);border-top-color:var(--color-blue-500);animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+</style>
+
+<header class="topbar" id="topbar"></header>
+<div id="step-indicator-slot"></div>
+<div class="disclaimer" id="disclaimerbar">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.3" r=".4" fill="currentColor" stroke="none"/></svg>
+  <span><b>Prototype.</b> Figures and examples shown here are illustrative, not live Checkatrade data. Some product details are also illustrative where noted.</span>
+  <button class="disclaimer-x" data-action="dismiss-disclaimer" aria-label="Dismiss">&times;</button>
+</div>
+<main id="content"></main>
+<footer class="sitefooter">
+  <p>&copy; 2026 Checkatrade. This is a working prototype for internal demonstration purposes only.</p>
+  <p>All company, contact and legal details shown are illustrative and not for real-world use.</p>
+</footer>
+<div class="overlay" id="overlay" data-action="close-detail"></div>
+<div class="slideover" id="slideover"></div>
+<div class="toastregion" id="toasts"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  const LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAABLCAYAAAA/KfPWAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOjI0MzZjYjJkLTAwNmQtNDYxNS1iMjU1LTlhN2JlM2JkNGNiOQAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNoJys6D9jDTeXZidVsjNowFwAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6NTQ0Yjg2YmEtOTk4Yy00MGFmLWJjNTctYWEyMDY1YmUwYzdlbHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaELp8zIir1gEZ/TX5dHa7KsAAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYIMba3hpWkI1WDbkRqMaMO9JI2smIrg1kQDBWYvw0blhmpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2jp+DLWeFtDc80C3JfqFRPQAAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFggx/xjn/VSsIEG2sHERtfZzP7//lRM1oMAyd9JEuH3Wm5kbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYToyNDM2Y2IyZC0wMDZkLTQ2MTUtYjI1NS05YTdiZTNiZDRjYjkvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDowMzk3ZDI3MS1jYmRiLTQ0YjEtYTZiNi03NmM1ZjNjOWI3M2NyY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggxtreGlaQjVYNuRGoxow70kjayYiuDWRAMFZi/DRuWGaiY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYIHtS3Ho91nDfIiK2G840st+p2S9ML52i0l+7PoprojZDomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYIM4jsz9YJZbZtqsXJyafjHkeYqeL0SleE8zEN8FjNzVCdGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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";
+  // NOTE: the logo above resolves via the design-system export's checkatrade-logo.png (base64-inlined for the Artifact CSP).
+
+  /* ============================== DATA ============================== */
+  const DATA = {
+    persona:{ business:"Whitlock Plumbing & Heating", owner:"Dave Whitlock", initials:"DW", trade:"Plumbing & Heating", postcode:"RG1", radius:15 },
+    trades:["Plumbing & Heating","Electrical","Roofing","Building & renovation","Gardening & landscaping","Carpentry"],
+    bizTypes:[
+      {value:"self", label:"Self Employed", desc:"I work for myself"},
+      {value:"limited", label:"Limited company", desc:"I operate through a limited company"},
+      {value:"planning", label:"Looking to start a business", desc:"I'm planning to start my business"}
+    ],
+    worktypeOptions:["Boiler repair","Boiler installation","Bathroom refit","General plumbing","Emergency plumbing"],
+    demandCards:[
+      {type:"Boiler repair", area:"RG6, Reading", posted:"2 hrs ago", value:"£150–£300", snippet:"No heating or hot water since last night."},
+      {type:"Bathroom refit", area:"RG1, Reading", posted:"5 hrs ago", value:"£800–£1,500", snippet:"Replacing bath with a walk-in shower."},
+      {type:"Boiler installation", area:"RG40, Wokingham", posted:"Yesterday", value:"£2,200–£3,000", snippet:"Old boiler needs replacing, 3-bed semi."},
+      {type:"Emergency plumbing", area:"RG2, Reading", posted:"40 mins ago", value:"£80–£180", snippet:"Leaking pipe under the kitchen sink."},
+      {type:"General plumbing", area:"RG12, Bracknell", posted:"3 days ago", value:"£100–£220", snippet:"Dripping tap and a running toilet."},
+      {type:"Boiler repair", area:"RG1, Reading", posted:"1 hr ago", value:"£120–£250", snippet:"Boiler banging, annual service overdue."}
+    ],
+    plans:{
+      payg:{name:"PAYG", price:"No monthly fee", priceNum:0, sub:"£18–£45 per accepted enquiry + VAT", desc:"Flexible access to enquiries, with your spend based on the opportunities you accept."},
+      fixedLow:{name:"Low", price:"£229", priceNum:229, sub:"/month + VAT", demandRange:"58–82", desc:"Predictable monthly spend, sized to a lighter share of local work."},
+      fixedMedium:{name:"Medium", price:"£329", priceNum:329, sub:"/month + VAT", demandRange:"87–125", desc:"Predictable monthly spend, sized to your stated capacity and the work available in your area."},
+      fixedHigh:{name:"High", price:"£539", priceNum:539, sub:"/month + VAT", demandRange:"148–212", desc:"Predictable monthly spend for trades who can take on the most work from day one."},
+      board:{name:"Opportunity Board", price:"£59", priceNum:59, sub:"/month + VAT membership", desc:"Pay for membership, then use prepaid credits to unlock the opportunities you choose. Credits don't expire, but they can't be refunded or used for other products."},
+      approved:{name:"Approved", price:"£30", priceNum:30, sub:"/month + VAT", desc:"Keep your profile without buying homeowner enquiries.", included:["Checkatrade profile","Collect reviews"], excluded:["Appear in matched search results"]}
+    },
+    benchmark:{ responseRate:74, responseTime:"2h 10m", winRate:50 },
+    workplan:{
+      leaking:{
+        tone:"warning",
+        delivered:12, responded:5, won:1,
+        responseRatePct:42, responseTime:"6h 40m", winRatePct:20,
+        revenue:480, spend:129, costPerJob:129,
+        feed:[
+          {type:"Emergency plumbing", area:"RG2", posted:"6h 40m ago", status:"none"},
+          {type:"Boiler repair", area:"RG1", posted:"1d ago", status:"lost"},
+          {type:"Bathroom refit", area:"RG1", posted:"2d ago", status:"none"},
+          {type:"General plumbing", area:"RG12", posted:"3d ago", status:"won"},
+          {type:"Boiler installation", area:"RG40", posted:"4d ago", status:"none"}
+        ]
+      },
+      constrained:{
+        tone:"success",
+        delivered:12, responded:12, won:8,
+        responseRatePct:100, responseTime:"18 min", winRatePct:67,
+        revenue:3850, spend:129, costPerJob:16,
+        feed:[
+          {type:"Emergency plumbing", area:"RG2", posted:"25 min ago", status:"won"},
+          {type:"Boiler repair", area:"RG1", posted:"1d ago", status:"won"},
+          {type:"Bathroom refit", area:"RG1", posted:"2d ago", status:"won"},
+          {type:"General plumbing", area:"RG12", posted:"3d ago", status:"lost"},
+          {type:"Boiler installation", area:"RG40", posted:"4d ago", status:"won"}
+        ]
+      },
+      recovering:{
+        tone:"information",
+        delivered:12, responded:11, won:6,
+        responseRatePct:92, responseTime:"35 min", winRatePct:55,
+        revenue:2850, spend:129, costPerJob:22,
+        feed:[
+          {type:"Emergency plumbing", area:"RG2", posted:"32 min ago", status:"won"},
+          {type:"Boiler repair", area:"RG1", posted:"1d ago", status:"won"},
+          {type:"Bathroom refit", area:"RG1", posted:"2d ago", status:"lost"},
+          {type:"General plumbing", area:"RG12", posted:"3d ago", status:"won"},
+          {type:"Boiler installation", area:"RG40", posted:"5d ago", status:"none"}
+        ]
+      }
+    }
+  };
+
+  const RECS = {
+    options:{
+      directory:{ name:"Directory & profile premium", price:"£15/month + VAT", recommended:true,
+        why:"Your profile is new and currently has no photos or reviews. A stronger profile may help homeowners choose you when they find you.", note:"We'll learn whether it improves engagement before recommending more." },
+      sponsored:{ name:"Sponsored placement", price:"From £100/month + VAT", recommended:false,
+        why:"You're new to Checkatrade, so we don't yet know how well your enquiries turn into jobs. Sponsored placement can increase your visibility, but we'd rather see how you respond to and convert enquiries first." },
+      board:{ name:"Opportunity Board", price:"£59/month + VAT membership", recommended:false,
+        why:"You told us you don't have much spare time to choose and quote for jobs. Board gives you more control over which opportunities you pursue, but we'd only recommend it when you have the capacity to act on them." }
+    },
+    workplan:{
+      leaking:{
+        bannerTitle:"We don't recommend taking on more enquiries right now",
+        bannerBody:"You're receiving enquiries, but many aren't getting a quick response.",
+        whatWedDo:"Improve your response rate before taking on more enquiries.",
+        why:"Many enquiries aren't getting a quick response. That may be limiting how many turn into jobs, so we'd fix that before sending you more.",
+        evidence:[
+          {k:"Response rate", v:"42% vs 74% benchmark"},
+          {k:"Avg response time", v:"6h 40m vs 2h 10m benchmark"},
+          {k:"Observed win rate", v:"20% vs 50% benchmark"},
+          {k:"Enquiries without a response", v:"7 of 12"},
+          {k:"Spend per observed job won", v:"£129 vs a converting trade's ~£16"}
+        ],
+        consequence:"If faster responses lead to more jobs, we should see more of your existing enquiries turn into jobs. We'll check this over the next cycle.",
+        confidence:2,
+        confidenceLabel:"Moderate confidence. We've seen your response behaviour clearly, but not enough completed jobs yet to be fully confident. Confidence will increase next cycle.",
+        alternatives:[
+          {id:"apply-alert", primary:true, label:"Turn on instant enquiry alerts", desc:"Get notified as soon as an enquiry arrives so you can respond faster."},
+          {id:"manual-handle", primary:false, label:"I already respond by phone", desc:"Mark this cycle as handled manually — we'll re-check next month."},
+          {id:"pause-leads", primary:false, label:"Pause new leads for 2 weeks", desc:"Pause new enquiries while you catch up with the work you already have."},
+          {id:"talk-coach", primary:false, label:"Talk to your advisor", desc:"A real person can help you set up a faster response workflow."}
+        ]
+      },
+      constrained:{
+        bannerTitle:"You may be able to take on more enquiries",
+        bannerBody:"You're converting enquiries well and using your full allowance early.",
+        whatWedDo:"Try a small amount of extra work, then check that it turns into jobs before adding more.",
+        why:"Your evidence shows you're responding faster and winning more often than the benchmark for your category, and you're running out of enquiries before the month ends.",
+        evidence:[
+          {k:"Response rate", v:"100% vs 74% benchmark"},
+          {k:"Avg response time", v:"18 min vs 2h 10m benchmark"},
+          {k:"Observed win rate", v:"67% vs 50% benchmark"},
+          {k:"Enquiries used", v:"Day 18 of 30"},
+          {k:"Spend per observed job won", v:"£16"}
+        ],
+        consequence:"If your current results continue, taking on more enquiries should give you more opportunities to win jobs. We'll test this before recommending more.",
+        confidence:3,
+        confidenceLabel:"Good initial confidence. 12 enquiries observed this cycle. You're responding quickly and converting strongly, so we'll test a small increase in demand rather than making a large change.",
+        alternatives:[
+          {id:"accept-expand", primary:true, label:"Try 6 additional PAYG enquiries", desc:"Extra spend: £120–£190/month."},
+          {id:"upgrade-fixed", primary:false, label:"Upgrade to the High tier", desc:DATA.plans.fixedHigh.price+" "+DATA.plans.fixedHigh.sub+" for more enquiries built in, instead of topping up."},
+          {id:"remind-later", primary:false, label:"Not now — remind me in 2 weeks", desc:"Keep an eye on it, decide later."},
+          {id:"talk-advisor", primary:false, label:"Talk to your advisor", desc:"Get a second opinion before committing to more spend."}
+        ]
+      },
+      recovering:{
+        bannerTitle:"Nice recovery — let's confirm it holds",
+        bannerBody:"Your results have improved this cycle, but it's still early to expand.",
+        whatWedDo:"Keep monitoring — confirm the improvement holds before taking on more enquiries.",
+        why:"One good cycle is encouraging, but it's not yet enough evidence to recommend spending more — we want to see the improvement hold before suggesting expansion.",
+        evidence:[
+          {k:"Response rate", v:"92% vs 42% last cycle"},
+          {k:"Avg response time", v:"35 min vs 6h 40m last cycle"},
+          {k:"Observed win rate", v:"55% vs 20% last cycle"},
+          {k:"Observed jobs won", v:"6 vs 1 last cycle"},
+          {k:"Spend per observed job won", v:"£22 vs £129 last cycle"}
+        ],
+        consequence:"If this improvement holds for another cycle, we'll have more confidence that you can make good use of additional enquiries.",
+        confidence:2,
+        confidenceLabel:"Moderate confidence, and rising. We've seen strong response behaviour this cycle, but we need another cycle before we're confident the improvement will hold.",
+        alternatives:[
+          {id:"keep-monitoring", primary:true, label:"Keep monitoring (recommended)", desc:"We'll re-check your numbers automatically at the end of this cycle."},
+          {id:"early-topup", primary:false, label:"Consider a small PAYG top-up now", desc:"Not our recommendation yet — only one cycle of recovery data exists."},
+          {id:"talk-coach2", primary:false, label:"Talk to your advisor", desc:"Review what changed and how to keep it up."}
+        ]
+      }
+    },
+    mechanisms:[
+      {headline:"PAYG may suit you better", when:"We'd consider this if the amount of work you take on or your monthly spend becomes consistently more variable."},
+      {headline:"Stay on Fixed for now", when:"We'd consider this when your results remain strong and predictable with a fixed monthly budget."},
+      {headline:"Use Opportunity Board when you have spare capacity", when:"We'd consider this if you're consistently choosing and winning the right opportunities with capacity left over."}
+    ],
+    sales:{
+      intro:"Your advisor can see the same information and help if there's something about your business the numbers don't capture.",
+      usefulWhen:[
+        "We don't have enough information yet",
+        "The results are mixed",
+        "You're considering a bigger change",
+        "There's something about your business we can't see from the numbers alone"
+      ],
+      overrideNote:"If there's something about your business the numbers don't capture, your advisor can help you decide."
+    }
+  };
+
+  /* ============================== TRADE PACKAGE RECOMMENDATION ENGINE ==============================
+     Rules-based (not ML). Stated preferences -> mechanism + starting tier. See Mini PRD "Trade Package
+     Recommendation" — capacity determines how much, sourcing preference determines how, frequency
+     determines how flexible. Deliberately conservative: preferences, not observed behaviour. */
+  const CAPACITY_OPTIONS = ["None","1–2 jobs","3–5 jobs","6+ jobs"];
+  const CAPACITY_BAND = {"None":"NONE","1–2 jobs":"LOW_1_2","3–5 jobs":"MEDIUM_3_5","6+ jobs":"HIGH_6_PLUS"};
+  const FREQUENCY_OPTIONS = ["Steady flow","Occasional bursts","Only when quiet"];
+  const FREQUENCY_BAND = {"Steady flow":"STEADY","Occasional bursts":"OCCASIONAL","Only when quiet":"QUIET_ONLY"};
+  const SOURCING_OPTIONS = ["Send me enquiries","Choose them myself","A mix of both"];
+  const SOURCING_BAND = {"Send me enquiries":"SENT_TO_ME","Choose them myself":"SELF_SOURCE","A mix of both":"MIXED"};
+  const TIER_BY_CAPACITY = {LOW_1_2:"fixedLow", MEDIUM_3_5:"fixedMedium", HIGH_6_PLUS:"fixedHigh"};
+
+  function computeRecommendation(capacityBand, frequencyBand, sourcingBand){
+    if(capacityBand === "NONE"){
+      return { mechanism:"APPROVED", tier:null, alternative:{mechanism:"PAYG", tier:null} };
+    }
+    if(sourcingBand === "SELF_SOURCE"){
+      return { mechanism:"BOARD", tier:null, alternative:{mechanism:"PAYG", tier:null} };
+    }
+    const tier = TIER_BY_CAPACITY[capacityBand];
+    let mechanism;
+    if(frequencyBand === "STEADY"){ mechanism = "FIXED"; }
+    else { mechanism = "PAYG"; }
+    let alternative;
+    if(sourcingBand === "MIXED"){
+      alternative = {mechanism:"BOARD", tier:null};
+    } else if(mechanism === "FIXED"){
+      alternative = {mechanism:"PAYG", tier:null};
+    } else {
+      alternative = {mechanism:"FIXED", tier:tier};
+    }
+    return { mechanism, tier: mechanism==="FIXED" ? tier : null, alternative };
+  }
+  function mechanismToPlanKey(mechanism, tier){
+    if(mechanism === "FIXED") return tier;
+    if(mechanism === "PAYG") return "payg";
+    if(mechanism === "BOARD") return "board";
+    return "approved";
+  }
+  function shortReasons(bands){
+    const capShort = {
+      NONE:"You don't have spare capacity for new work right now",
+      LOW_1_2:"You have capacity for around 1–2 jobs a month",
+      MEDIUM_3_5:"You have capacity for around 3–5 jobs a month",
+      HIGH_6_PLUS:"You have capacity for 6+ jobs a month"
+    }[bands.capacityBand];
+    if(bands.capacityBand === "NONE") return [capShort];
+    const secondShort = {
+      SELF_SOURCE:"You'd prefer to choose which opportunities to pursue",
+      SENT_TO_ME: bands.frequencyBand==="STEADY" ? "You'd like a steady flow of enquiries sent to you" : "You'd like enquiries sent to you, without a fixed commitment",
+      MIXED:"You'd like a mix of sent and self-chosen opportunities"
+    }[bands.sourcingBand];
+    return [capShort, secondShort];
+  }
+
+  /* ============================== STATE ============================== */
+  const state = {
+    screen:"account",
+    account:{ owner:DATA.persona.owner, email:"", mobile:"", password:"", terms:true },
+    q:{ business:DATA.persona.business, bizType:"self", team:"Just me",
+        trade:"Plumbing & Heating", worktypes:DATA.worktypeOptions.slice(),
+        postcode:"RG1", radiusIndex:4,
+        capacity:"3–5 jobs", frequency:"Steady flow", sourcing:"Send me enquiries" },
+    chosenPlan:"fixedMedium",
+    planManuallyChosen:false,
+    recommendation:null,
+    optionsOn:{ directory:true, sponsored:false, board:false },
+    payLoading:false,
+    workplanScenario:"leaking",
+    loopStage:"idle",
+    firstWorkplanVisit:true,
+    detailOpen:false,
+    disclaimerDismissed:false,
+    compareOpen:false,
+  };
+  const RADIUS_STEPS = ["1 mile","2 miles","5 miles","10 miles","15 miles","25 miles","50 miles"];
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function money(n){ return "£" + Number(n).toLocaleString("en-GB"); }
+  function money2(n){ return "£" + Number(n).toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  const VAT_RATE = 0.2;
+
+  /* ============================== ICONS (Lucide-style outline, per design-system iconography notes) ============================== */
+  const ICONS = {
+    lock:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    arrow:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>',
+    chevron:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+    search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+    spark:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg>',
+    shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>',
+    trend:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="14 6 21 6 21 13"/></svg>',
+    pause:'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+    info:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>'
+  };
+
+  /* ============================== RENDER: SHELL ============================== */
+  const ONBOARD_STEPS = ["Your business","Your trade & types of work","Your demand needs","Your plan","Payment"];
+  function stepIndexForScreen(){
+    return {aboutbusiness:0, worktype:1, demandneeds:2, plan:3, payment:4}[state.screen];
+  }
+
+  function renderTopbar(){
+    const el = document.getElementById("topbar");
+    const inApp = state.screen === "workplan";
+    if(inApp){
+      el.innerHTML =
+        '<img class="logo" src="'+LOGO+'" alt="Checkatrade">' +
+        '<div class="app-right">' +
+          '<span class="plan-tag">'+(state.chosenPlan.indexOf("fixed")===0?"Fixed &middot; ":"")+esc(DATA.plans[state.chosenPlan].name)+'</span>' +
+          '<div class="biz-pill"><span class="biz-avatar">'+DATA.persona.initials+'</span>'+esc(state.q.business)+'</div>' +
+        '</div>';
+    } else {
+      el.innerHTML =
+        '<img class="logo" src="'+LOGO+'" alt="Checkatrade">' +
+        '<div class="contact">Call us now on <a href="#">0800 123 4567</a><br>Lines open 8am–8pm, Mon–Fri, 10am–4pm Sat–Sun</div>';
+    }
+
+    const slot = document.getElementById("step-indicator-slot");
+    if(state.screen === "account" || state.screen === "demand" || inApp){ slot.innerHTML = ""; return; }
+    const idx = stepIndexForScreen();
+    slot.innerHTML = '<div class="step-indicator">' + ONBOARD_STEPS.map((s,i)=>{
+      const cls = i===idx ? "active" : (i<idx ? "done" : "");
+      return '<div class="step '+cls+'"><div class="lbl">'+esc(s)+'</div><div class="track"></div></div>';
+    }).join('') + '</div>';
+  }
+
+  function renderDisclaimer(){
+    document.getElementById("disclaimerbar").style.display = state.disclaimerDismissed ? "none" : "flex";
+  }
+
+  /* ============================== SMALL COMPONENTS ============================== */
+  function stepFoot(backLabel, backAction, nextLabel, nextAction, nextVariant){
+    return '<div class="stepfoot">' +
+      (backAction ? '<button class="btn btn-outline btn-md" data-action="'+backAction+'">&larr; '+esc(backLabel)+'</button>' : '<span></span>') +
+      '<button class="btn btn-'+(nextVariant||'secondary')+' btn-md" data-action="'+nextAction+'">'+esc(nextLabel)+' '+ICONS.arrow+'</button>' +
+    '</div>';
+  }
+
+  /* ============================== SCREEN 1: ACCOUNT ============================== */
+  function screenAccount(){
+    const a = state.account;
+    return '<div class="split">' +
+      '<div class="brandpane">' +
+        '<div>' +
+          '<span class="logo-plate" style="margin-bottom:28px;"><img class="logo" src="'+LOGO+'"></span>' +
+          '<h1>Find local homeowners looking for your trade</h1>' +
+          '<p class="tagline">Tell us about your business and we\'ll recommend a plan based on the work available in your area and the jobs you can take on.</p>' +
+        '</div>' +
+        '<div>' +
+          '<div class="feat">'+ICONS.check+'<span>Preview the kind of jobs available in your area before choosing a plan</span></div>' +
+          '<div class="feat">'+ICONS.check+'<span>A plan matched to the amount of work you can take on</span></div>' +
+          '<div class="feat">'+ICONS.check+'<span>Ongoing guidance on when to take on more work — and when not to</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="formpane">' +
+        '<div class="eyebrow">Step 1 of 6</div>' +
+        '<h2 class="page-h" style="margin-bottom:22px;">Create your account</h2>' +
+        '<form id="account-form">' +
+          '<label class="field">Email<div class="inputwrap"><input type="email" data-field="account.email" placeholder="dave@whitlockplumbing.co.uk" value="'+esc(a.email)+'"></div></label>' +
+          '<label class="field">Mobile<div class="inputwrap"><input type="tel" data-field="account.mobile" placeholder="07700 900123" value="'+esc(a.mobile)+'"></div></label>' +
+          '<label class="field">Password<div class="inputwrap"><input type="password" data-field="account.password" placeholder="Choose a password" value="'+esc(a.password)+'"></div></label>' +
+          '<label class="checkrow"><input type="checkbox" data-field="account.terms" '+(a.terms?'checked':'')+'> I agree to the Terms and Privacy Policy</label>' +
+          '<button type="button" class="btn btn-secondary btn-lg btn-block" style="margin-top:6px;" data-action="create-account">Create my account</button>' +
+          '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);text-align:center;">Takes about 2 minutes. No payment needed to see what\'s available.</p>' +
+        '</form>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ============================== SCREENS 2–4: ABOUT YOUR BUSINESS / LOCAL AREA / WORK TYPE ============================== */
+  function radioCardRow(field, options){
+    return '<div class="stack">' + options.map(o=>{
+      const on = state.q[field] === o;
+      return '<button type="button" class="radiocard '+(on?'on':'')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o)+'">' +
+        '<span class="dot"></span><span class="lbl">'+esc(o)+'</span>' +
+      '</button>';
+    }).join('') + '</div>';
+  }
+  function radioCardRowRich(field, options){
+    return '<div class="stack">' + options.map(o=>{
+      const on = state.q[field] === o.value;
+      return '<button type="button" class="radiocard '+(on?'on':'')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o.value)+'">' +
+        '<span class="dot"></span><span class="lblwrap"><span class="lbl">'+esc(o.label)+'</span><span class="sub">'+esc(o.desc)+'</span></span>' +
+      '</button>';
+    }).join('') + '</div>';
+  }
+  function checkboxRow(field, options){
+    const cur = state.q[field];
+    return '<div class="stack">' + options.map(o=>{
+      const on = cur.includes(o);
+      return '<button type="button" class="cb-row '+(on?'on':'')+'" data-action="toggle-multi" data-field="'+field+'" data-value="'+esc(o)+'">' +
+        '<span class="cb-swatch">'+(on?ICONS.check:'')+'</span><span>'+esc(o)+'</span>' +
+      '</button>';
+    }).join('') + '</div>';
+  }
+
+  function screenAboutBusiness(){
+    const r = state.q.radiusIndex;
+    const pct = (r/(RADIUS_STEPS.length-1))*100;
+    return '<div class="eyebrow">Step 2 of 6</div>' +
+      '<h1 class="page-h">Tell us about your business</h1>' +
+      '<div class="qgroup">' +
+        '<label class="field">Business name<div class="inputwrap"><input type="text" data-field="q.business" value="'+esc(state.q.business)+'"></div>' +
+          '<span style="font-weight:400;color:var(--color-ink-body-subtle);">This is how homeowners will see your business.</span></label>' +
+        '<label class="field">Your name<div class="inputwrap"><input type="text" data-field="account.owner" value="'+esc(state.account.owner)+'"></div></label>' +
+        '<div>' +
+          '<div class="qtitle">Your postcode</div>' +
+          '<label class="field"><div class="inputwrap">' +
+            '<input type="text" data-field="q.postcode" value="'+esc(state.q.postcode)+'">' +
+            '<span class="validok">'+ICONS.check+'</span>' +
+          '</div></label>' +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">How far would you like to travel for work?</div>' +
+          '<div class="cs-slider">' +
+            '<div class="track">' +
+              '<div class="fill" style="width:'+pct+'%;"></div>' +
+              RADIUS_STEPS.map((s,i)=>'<button type="button" class="dot '+(i<=r?'on':'')+'" data-action="set-radius" data-value="'+i+'" style="left:'+(i/(RADIUS_STEPS.length-1)*100)+'%;"></button>').join('') +
+            '</div>' +
+            '<div class="labels">' + RADIUS_STEPS.map(s=>'<span>'+s+'</span>').join('') + '</div>' +
+          '</div>' +
+          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:var(--space-4);">Areas covered will depend on your postcode and chosen radius.</p>' +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">What type of business are you?</div>' +
+          radioCardRowRich("bizType", DATA.bizTypes) +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">Team size</div>' +
+          radioCardRow("team", ["Just me","2–4 people","5+ people"]) +
+        '</div>' +
+      '</div>' +
+      stepFoot("Back", "go-account", "Continue", "go-worktype", "primary");
+  }
+
+  function screenWorkType(){
+    return '<div class="eyebrow">Step 3 of 6</div>' +
+      '<h1 class="page-h">Your trade &amp; types of work</h1>' +
+      '<div class="qgroup">' +
+        '<div>' +
+          '<div class="qtitle">What type of trade are you?</div>' +
+          radioCardRow("trade", DATA.trades) +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">What types of work would you like to receive?</div>' +
+          checkboxRow("worktypes", DATA.worktypeOptions) +
+          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">You can change these later.</p>' +
+        '</div>' +
+      '</div>' +
+      stepFoot("Back", "go-aboutbusiness", "Continue", "go-demandneeds", "primary");
+  }
+
+  function screenDemandNeeds(){
+    return '<div class="eyebrow">Step 4 of 6</div>' +
+      '<h1 class="page-h">Your demand needs</h1>' +
+      '<div class="qgroup">' +
+        '<div>' +
+          '<div class="qtitle">How much capacity do you normally have for new jobs per month?</div>' +
+          radioCardRow("capacity", CAPACITY_OPTIONS) +
+          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;">Think about a typical month rather than this week.</p>' +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">How often would you ideally like new enquiries?</div>' +
+          radioCardRow("frequency", FREQUENCY_OPTIONS) +
+        '</div>' +
+        '<div>' +
+          '<div class="qtitle">How would you prefer to find new work?</div>' +
+          radioCardRow("sourcing", SOURCING_OPTIONS) +
+        '</div>' +
+      '</div>' +
+      stepFoot("Back", "go-worktype", "See local jobs", "go-demand", "primary");
+  }
+
+  /* ============================== DEMAND PREVIEW (between steps 4 and 5) ============================== */
+  function demandCard(c){
+    return '<div class="demandcard">' +
+      '<div class="dc-body">' +
+        '<div class="dc-type">'+esc(c.type)+'</div>' +
+        '<div class="dc-meta">'+esc(c.area)+' &middot; Posted '+esc(c.posted)+'</div>' +
+        '<p class="dc-snip">"'+esc(c.snippet)+'"</p>' +
+        '<div class="dc-valuerow"><span class="dc-valuelabel">Indicative job value</span><span class="dc-valueamt">'+c.value+'</span></div>' +
+      '</div>' +
+      '<div class="dc-redact">' +
+        '<div class="dc-redact-label">Homeowner details</div>' +
+        '<div class="dc-bar" style="width:76%;"></div>' +
+        '<div class="dc-bar" style="width:48%;"></div>' +
+        '<div class="dc-lockrow">'+ICONS.lock+' Homeowner contact details hidden</div>' +
+        '<button type="button" class="btn btn-outline btn-sm btn-block" data-action="go-plan">Choose a plan to unlock this enquiry</button>' +
+      '</div>' +
+    '</div>';
+  }
+  function screenDemand(){
+    const matched = DATA.demandCards.filter(c=>state.q.worktypes.includes(c.type));
+    const cards = matched.length ? matched : DATA.demandCards;
+    return '<div class="eyebrow">Before you choose a plan</div>' +
+      '<h1 class="page-h">Preview local <span style="color:var(--color-blue-500);">'+esc(state.q.trade)+'</span> jobs</h1>' +
+      '<p class="lede" style="margin-top:6px;">Here\'s an example of the work available within '+RADIUS_STEPS[state.q.radiusIndex]+' of '+esc(state.q.postcode)+', based on the types of work you chose. Homeowner details are hidden until you choose a plan.</p>' +
+      '<div class="card" style="margin-top:var(--space-6);border-style:dashed;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;"><b>Your Free Profile</b><span class="badge badge-neutral">Included, always free</span></div>' +
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;line-height:1.6;">Your free profile helps homeowners find your business when they search for you by name. It doesn\'t give you access to homeowner enquiries.</p>' +
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);margin-top:10px;font-weight:600;">Want to receive homeowner enquiries? Choose how you\'d like to get them below.</p>' +
+      '</div>' +
+      '<div class="banner-strip" style="margin-top:var(--space-4);">' +
+        '<span class="big">23 enquiries</span><span style="font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-default);">were posted in '+esc(state.q.trade)+' near '+esc(state.q.postcode)+' in the last 7 days</span>' +
+      '</div>' +
+      '<div class="grid grid-auto">' + cards.map(demandCard).join('') + '</div>' +
+      stepFoot("Back", "go-demandneeds", "See your recommended plan", "go-plan", "secondary");
+  }
+
+  /* ============================== SCREEN 5: RECOMMENDED PLAN (incl. optional extras) ============================== */
+  function planOptionCard(key, tag){
+    const p = DATA.plans[key];
+    const chosen = state.chosenPlan === key;
+    const isFixed = key.indexOf("fixed") === 0;
+    const badge = tag==="recommended" ? '<span class="badge badge-brand" style="position:absolute;top:-12px;left:18px;">'+ICONS.spark+' Recommended</span>'
+                : tag==="alternative" ? '<span class="badge badge-neutral" style="position:absolute;top:-12px;left:18px;">Alternative</span>' : '';
+    const cta = chosen ? (ICONS.check+' Selected') : (tag==="recommended" ? "Choose "+p.name : "Select");
+
+    let body, priceMain, priceSub;
+    if(key === "payg"){
+      priceMain = "£18–£45"; priceSub = "per accepted enquiry + VAT";
+      body =
+        '<span class="badge badge-neutral" style="margin-top:6px;">No upfront monthly fee</span>' +
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;">Pay only when you receive an enquiry.</p>';
+    } else if(key === "approved"){
+      priceMain = p.price; priceSub = p.sub;
+      body =
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);font-weight:600;margin-top:6px;">'+esc(p.desc)+'</p>' +
+        '<ul style="list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);">' +
+          p.included.map(t=>'<li style="display:flex;gap:7px;align-items:flex-start;"><span style="color:var(--color-ink-feedback-success);flex:none;">'+ICONS.check+'</span>'+esc(t)+'</li>').join('') +
+          p.excluded.map(t=>'<li style="display:flex;gap:7px;align-items:flex-start;"><span style="color:var(--color-ink-feedback-error);flex:none;font-weight:700;">&times;</span>'+esc(t)+'</li>').join('') +
+        '</ul>';
+    } else if(isFixed){
+      priceMain = p.price; priceSub = p.sub;
+      body =
+        '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:8px;">Annual enquiry range<br><b style="font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-default);">'+p.demandRange+'*</b></p>' +
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:6px;">'+p.desc+'</p>';
+    } else {
+      priceMain = p.price; priceSub = p.sub;
+      body = '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);margin-top:6px;">'+esc(p.desc)+'</p>';
+    }
+
+    return '<div class="plancard '+(chosen?'chosen':'')+'" style="position:relative;">' +
+      badge +
+      '<div style="margin-top:'+(tag?'10px':'0')+';"><b>'+p.name+(isFixed?' Fixed':'')+'</b></div>' +
+      '<div class="plan-price">'+priceMain+'<small><br>'+priceSub+'</small></div>' +
+      body +
+      '<button type="button" class="btn '+(chosen?'btn-secondary':'btn-outline')+' btn-sm btn-block" style="margin-top:10px;" data-action="choose-plan" data-value="'+key+'">'+cta+'</button>' +
+    '</div>';
+  }
+  function optionCard(key){
+    const o = RECS.options[key];
+    const on = state.optionsOn[key];
+    return '<div class="optioncard '+(o.recommended?'':'muted')+'">' +
+      '<div class="opt-top">' +
+        '<div><div style="font-weight:700;font-size:var(--typography-body-font-size-lg);">'+esc(o.name)+'</div><div class="opt-price">'+o.price+'</div></div>' +
+        '<button class="toggle '+(on?'on':'')+'" data-action="toggle-option" data-value="'+key+'" aria-label="Toggle '+esc(o.name)+'"></button>' +
+      '</div>' +
+      '<span class="badge '+(o.recommended?'badge-brand':'badge-neutral')+'">'+(o.recommended?ICONS.check+' Recommended':'Not recommended right now')+'</span>' +
+      '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.55;">'+esc(o.why)+'</p>' +
+      (o.note ? '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);line-height:1.5;">'+esc(o.note)+'</p>' : '') +
+    '</div>';
+  }
+  function screenPlan(){
+    const rec = state.recommendation;
+    const bands = { capacityBand: rec.capacityBand, frequencyBand: rec.frequencyBand, sourcingBand: rec.sourcingBand };
+    const recKey = mechanismToPlanKey(rec.mechanism, rec.tier);
+    const altKey = mechanismToPlanKey(rec.alternative.mechanism, rec.alternative.tier);
+    const primaryKeys = rec.mechanism === "FIXED" ? ["fixedLow","fixedMedium","fixedHigh"] : [recKey];
+    const shownKeys = {}; primaryKeys.concat([altKey]).forEach(k=>shownKeys[k]=true);
+    const otherKeys = ["fixedLow","fixedMedium","fixedHigh","payg","board","approved"].filter(k=>!shownKeys[k]);
+
+    const cur = DATA.plans[state.chosenPlan];
+    const planPrice = cur.priceNum;
+    let total = planPrice;
+    if(state.optionsOn.directory) total += 15;
+    if(state.optionsOn.sponsored) total += 100;
+    const reasons = shortReasons(bands);
+    const otherAndAlt = [altKey].concat(otherKeys);
+
+    return '<div class="eyebrow">Step 5 of 6</div>' +
+      '<h1 class="page-h">Your plan</h1>' +
+      '<div class="eyebrow" style="margin-top:var(--space-6);">Your recommended plan</div>' +
+      (primaryKeys.length===3 ?
+        '<div class="grid grid-3" style="margin-top:var(--space-3);align-items:start;">' + primaryKeys.map(k=>planOptionCard(k, k===recKey?"recommended":null)).join('') + '</div>' +
+        '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">*Your monthly price stays fixed. Enquiry volume can vary — this is an estimate, not a guarantee.</p>'
+        : '<div style="margin-top:var(--space-3);max-width:340px;">' + planOptionCard(primaryKeys[0], "recommended") + '</div>') +
+      '<div class="qtitle" style="margin-top:var(--space-6);margin-bottom:8px;">Why this fits</div>' +
+      '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">' +
+        reasons.map(r=>'<li style="display:flex;gap:8px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);"><span style="color:var(--color-ink-feedback-success);flex:none;">'+ICONS.check+'</span>'+esc(r)+'</li>').join('') +
+      '</ul>' +
+      '<button class="btn btn-ghost btn-sm" data-action="toggle-compare" style="margin-top:var(--space-6);" type="button">'+(state.compareOpen?'Hide other options':'See other options')+' '+ICONS.chevron+'</button>' +
+      (state.compareOpen ? '<div class="eyebrow" style="margin-top:var(--space-4);margin-bottom:0;">Other options</div>' +
+        '<div class="grid grid-2" style="margin-top:var(--space-3);">' + otherAndAlt.map(k=>planOptionCard(k, null)).join('') + '</div>' : '') +
+      '<div class="eyebrow" style="margin-top:var(--space-8);margin-bottom:0;">Optional extras</div>' +
+      '<div class="grid grid-2" style="margin-top:var(--space-3);">' + ["directory","sponsored"].map(optionCard).join('') + '</div>' +
+      '<div class="card soft" style="margin-top:var(--space-4);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">' +
+        '<div style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);">Estimated monthly total</div><div class="plan-price">'+money(total)+'<small style="font-family:var(--font-body);"> /month + VAT</small></div>' +
+      '</div>' +
+      stepFoot("Back", "go-demand", "Continue to payment — " + money(total) + "/month + VAT", "go-payment", "secondary");
+  }
+
+  /* ============================== SCREEN 6 OF 6: PAYMENT ============================== */
+  function screenPayment(){
+    const chosen = DATA.plans[state.chosenPlan];
+    const planPrice = chosen.priceNum;
+    let total = planPrice;
+    const items = [[chosen.name + " plan", planPrice]];
+    if(state.optionsOn.directory){ items.push(["Directory & profile premium", 15]); total+=15; }
+    if(state.optionsOn.sponsored){ items.push(["Sponsored placement", 100]); total+=100; }
+    const vat = Math.round(total * VAT_RATE * 100) / 100;
+    const grandTotal = total + vat;
+
+    if(state.payLoading){
+      return '<div class="center-loading"><div class="spinner"></div><p style="color:var(--color-ink-body-subtle);font-size:var(--typography-body-font-size-md);">Setting up '+esc(state.q.business)+'\'s account&hellip;</p></div>';
+    }
+
+    return '<div class="eyebrow">Step 6 of 6</div>' +
+      '<h1 class="page-h">Payment</h1>' +
+      '<div class="grid grid-2" style="margin-top:var(--space-6);align-items:start;">' +
+        '<div class="card">' +
+          '<div class="eyebrow">Order summary</div>' +
+          items.map(i=>'<div class="line-item"><span>'+esc(i[0])+'</span><span>'+money2(i[1])+'/month</span></div>').join('') +
+          '<div class="line-item"><span>Subtotal</span><span>'+money2(total)+'/month</span></div>' +
+          '<div class="line-item"><span>VAT ('+(VAT_RATE*100)+'%)</span><span>'+money2(vat)+'/month</span></div>' +
+          '<div class="line-item total"><span>Monthly total</span><span>'+money2(grandTotal)+'/month</span></div>' +
+        '</div>' +
+        '<div class="card">' +
+          '<div class="eyebrow">Card details</div>' +
+          '<div class="fakenote" style="margin:var(--space-3) 0 var(--space-4);">'+ICONS.lock+'<span>This is a prototype. No real payment is processed — please don\'t enter real card details.</span></div>' +
+          '<div style="display:flex;flex-direction:column;gap:var(--space-3);">' +
+            '<label class="field">Name on card<div class="inputwrap"><input type="text" value="'+esc(state.account.owner)+'" readonly></div></label>' +
+            '<label class="field">Card number<div class="inputwrap"><input type="text" value="4242 4242 4242 4242 (demo)" readonly></div></label>' +
+            '<div class="grid grid-2"><label class="field">Expiry<div class="inputwrap"><input type="text" value="12/29" readonly></div></label><label class="field">CVC<div class="inputwrap"><input type="text" value="123" readonly></div></label></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      stepFoot("Back", "go-plan", "Start your " + chosen.name + " plan — " + money2(grandTotal) + "/month including VAT", "pay-now", "secondary");
+  }
+
+  /* ============================== SCREEN 7/8: WORK PLAN ============================== */
+  function kpiTile(label, value, cmp, cmpTone){
+    return '<div class="kpi"><div class="label">'+esc(label)+'</div><div class="value">'+value+'</div>'+(cmp?'<div class="cmp '+ (cmpTone||'') +'">'+cmp+'</div>':'')+'</div>';
+  }
+
+  function funnel(w){
+    const max = w.delivered;
+    function pct(n){ return Math.round((n/max)*100); }
+    const color = {delivered:"var(--color-grey-400)", responded:"var(--color-blue-500)", won:"var(--color-ink-feedback-success)"};
+    return '<div class="funnel">' +
+      '<div class="funnel-row"><span class="funnel-label">Delivered</span><div class="funnel-track"><div class="funnel-fill" style="width:100%;background:'+color.delivered+';"></div></div><span class="funnel-count">'+w.delivered+'</span></div>' +
+      '<div class="funnel-row"><span class="funnel-label">Responded</span><div class="funnel-track"><div class="funnel-fill" style="width:'+pct(w.responded)+'%;background:'+color.responded+';"></div></div><span class="funnel-count">'+w.responded+'</span></div>' +
+      '<div class="funnel-row"><span class="funnel-label">Won</span><div class="funnel-track"><div class="funnel-fill" style="width:'+pct(w.won)+'%;background:'+color.won+';"></div></div><span class="funnel-count">'+w.won+'</span></div>' +
+    '</div>';
+  }
+
+  function feedRow(f){
+    const map = {won:["Won","status-won"], lost:["Lost","status-lost"], none:["No response","status-none"]};
+    const [label,cls] = map[f.status];
+    return '<div class="feedrow"><div class="ft">'+esc(f.type)+'<div class="fm">'+esc(f.area)+' &middot; '+esc(f.posted)+'</div></div><span class="status '+cls+'">'+label+'</span></div>';
+  }
+
+  function screenWorkplan(){
+    const scenario = state.workplanScenario;
+    const w = DATA.workplan[scenario];
+    const rec = RECS.workplan[scenario];
+    const toneClass = "tone-" + w.tone;
+    const icon = w.tone === "success" ? ICONS.trend : (w.tone === "warning" ? ICONS.pause : ICONS.info);
+
+    const evidenceLine = {
+      leaking: w.responded+" of "+w.delivered+" enquiries answered &middot; "+w.won+(w.won===1?" job won":" jobs won"),
+      constrained: w.winRatePct+"% win rate &middot; £"+w.costPerJob+" per job",
+      recovering: w.responseRatePct+"% response rate &middot; "+w.won+" jobs won"
+    }[scenario];
+    const primaryAlt = rec.alternatives[0];
+    const secondaryAlt = rec.alternatives[1];
+
+    return '<h1 class="page-h">Work Plan</h1>' +
+      '<p class="lede" style="margin-top:2px;font-size:var(--typography-body-font-size-md);">'+esc(state.q.business)+' &middot; this cycle\'s results</p>' +
+      '<div class="recbanner '+toneClass+'" style="margin-top:var(--space-6);">' +
+        '<div class="recbanner-icon">'+icon+'</div>' +
+        '<div style="flex:1;min-width:220px;">' +
+          '<div class="eyebrow" style="margin-bottom:2px;">Your recommendation</div>' +
+          '<h2 style="font-size:var(--typography-header-font-size-lg);">'+esc(rec.whatWedDo)+'</h2>' +
+          '<p style="margin-top:4px;">'+esc(rec.bannerBody)+'</p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="eyebrow" style="margin-top:var(--space-6);">Based on your results</div>' +
+      '<p style="font-size:var(--typography-body-font-size-lg);font-weight:700;margin-top:2px;">'+evidenceLine+'</p>' +
+      '<div class="eyebrow" style="margin-top:var(--space-6);margin-bottom:var(--space-3);">What you can do</div>' +
+      '<div class="altstack" style="max-width:420px;">' + altButton(primaryAlt) + altButton(secondaryAlt) + '</div>' +
+      '<button class="btn btn-ghost btn-sm" data-action="open-detail" style="margin-top:var(--space-5);" type="button">See full evidence &amp; options '+ICONS.chevron+'</button>' +
+      '<div class="democontrols">' +
+        '<div class="dc-label">Demo scenario</div>' +
+        '<div class="segmented">' +
+          ["leaking","constrained","recovering"].map(s=>'<button class="seg '+(scenario===s?'on':'')+'" data-action="set-scenario" data-value="'+s+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</button>').join('') +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ============================== SLIDE-OVER: RECOMMENDATION DETAIL ============================== */
+  function altButton(alt){
+    const applied = (alt.id === "apply-alert" && state.loopStage !== "idle");
+    const expandRequested = (alt.id === "accept-expand" && state.expandRequested);
+    const monitored = (alt.id === "keep-monitoring" && state.monitorAck);
+    let cls = "altbtn" + (alt.primary ? " primary" : "");
+    let label = alt.label;
+    let disabled = false;
+    if(applied){ cls += " done"; label = "Instant alerts, applied"; disabled = true; }
+    if(expandRequested){ cls += " done"; label = "Requested, we'll follow up"; disabled = true; }
+    if(monitored){ cls += " done"; label = "Got it, we're watching this cycle"; disabled = true; }
+    return '<button type="button" class="'+cls+'" data-action="apply-alt" data-value="'+alt.id+'" '+(disabled?'disabled':'')+'>' +
+      '<span>'+(applied||expandRequested||monitored ? ICONS.check+' ' : '')+esc(label)+'</span>' +
+      '<span class="d">'+esc(alt.desc)+'</span>' +
+    '</button>';
+  }
+
+  function renderDetail(){
+    const overlay = document.getElementById("overlay");
+    const so = document.getElementById("slideover");
+    if(!state.detailOpen){
+      overlay.classList.remove("show");
+      so.classList.remove("show");
+      return;
+    }
+    overlay.classList.add("show");
+    so.classList.add("show");
+    const scenario = state.workplanScenario;
+    const w = DATA.workplan[scenario];
+    const rec = RECS.workplan[scenario];
+
+    const showFastForward = scenario === "leaking" && state.loopStage === "applied";
+
+    so.innerHTML =
+      '<div class="so-head"><div><div class="eyebrow">Recommendation detail</div><h2 style="font-size:var(--typography-header-font-size-md);margin-top:5px;">'+esc(rec.bannerTitle)+'</h2></div>' +
+        '<button class="so-close" data-action="close-detail" aria-label="Close">&times;</button></div>' +
+      '<div class="so-body">' +
+        '<div class="so-section"><div class="st">Why?</div><p style="font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-subtle);line-height:1.6;">'+esc(rec.why)+'</p></div>' +
+        '<div class="so-section"><div class="st">Evidence</div><ul class="evidence-list">' +
+          rec.evidence.map(e=>'<li><span class="ev-k">'+esc(e.k)+'</span><span class="ev-v">'+esc(e.v)+'</span></li>').join('') +
+        '</ul></div>' +
+        '<div class="so-section"><div class="st">Full breakdown</div>' +
+          '<div class="grid kpi-grid">' +
+            kpiTile("Enquiries responded to", w.responded+"/"+w.delivered, "") +
+            kpiTile("Response rate", w.responseRatePct+"%", (w.responseRatePct>=DATA.benchmark.responseRate?"above":"below")+" "+DATA.benchmark.responseRate+"% benchmark", w.responseRatePct>=DATA.benchmark.responseRate?"good":"bad") +
+            kpiTile("Avg response time", w.responseTime, "vs "+DATA.benchmark.responseTime+" benchmark", w.responseRatePct>=DATA.benchmark.responseRate?"good":"bad") +
+            kpiTile("Observed win rate", w.winRatePct+"%", (w.winRatePct>=DATA.benchmark.winRate?"above":"below")+" "+DATA.benchmark.winRate+"% benchmark", w.winRatePct>=DATA.benchmark.winRate?"good":"bad") +
+            kpiTile("Observed jobs won", w.won+(w.won===1?" job":" jobs"), money(w.spend)+" spent &middot; "+money(w.costPerJob)+" per observed job") +
+          '</div>' +
+          '<div style="margin-top:var(--space-4);"><div style="font-size:var(--typography-body-font-size-sm);font-weight:700;margin-bottom:8px;">Enquiries delivered vs used</div>' + funnel(w) + '</div>' +
+          '<div style="margin-top:var(--space-4);"><div style="font-size:var(--typography-body-font-size-sm);font-weight:700;margin-bottom:8px;">This cycle\'s enquiries</div><div class="feedlist">' + w.feed.map(feedRow).join('') + '</div></div>' +
+        '</div>' +
+        '<div class="so-section"><div class="st">Expected consequence</div><p style="font-size:var(--typography-body-font-size-md);color:var(--color-ink-body-subtle);line-height:1.6;">'+esc(rec.consequence)+'</p></div>' +
+        '<div class="so-section"><div class="st">How confident are we?</div>' +
+          '<div class="confmeter">'+[1,2,3].map(i=>'<i class="'+(i<=rec.confidence?'on':'')+'"></i>').join('')+'</div>' +
+          '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:7px;">'+esc(rec.confidenceLabel)+'</p>' +
+        '</div>' +
+        '<div class="so-section"><div class="st">Alternative actions</div><div class="altstack">' +
+          rec.alternatives.map(altButton).join('') +
+        '</div></div>' +
+        '<div class="so-section"><div class="st">How you receive enquiries</div>' +
+          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.6;">We can also recommend changing <i>how</i> you receive enquiries — not just how many you receive. These are based on observed behaviour and outcomes, not a fixed rule — for example:</p>' +
+          '<div class="stack" style="margin-top:var(--space-3);">' +
+            RECS.mechanisms.map(m=>'<div style="border:1px solid var(--color-border-default);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:var(--color-background-surface-neutral-soft);">' +
+              '<div style="font-weight:700;font-size:var(--typography-body-font-size-md);">'+esc(m.headline)+'</div>' +
+              '<div style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:2px;">'+esc(m.when)+'</div>' +
+            '</div>').join('') +
+          '</div>' +
+          '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:9px;">Not a live Checkatrade capability today.</p>' +
+        '</div>' +
+        '<div class="so-section"><div class="st">Want a second opinion?</div>' +
+          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.6;">'+esc(RECS.sales.intro)+' It\'s most useful when:</p>' +
+          '<ul style="margin:8px 0 0;padding-left:18px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.7;">' +
+            RECS.sales.usefulWhen.map(t=>'<li>'+esc(t)+'</li>').join('') +
+          '</ul>' +
+          '<button type="button" class="btn btn-outline btn-sm" style="margin-top:var(--space-3);" data-action="talk-sales">Talk to your advisor</button>' +
+        '</div>' +
+        (showFastForward ?
+          '<div class="ff-box"><b>Instant alerts are on.</b> This prototype simulates the next 2 weeks so you can see how the Work Plan could respond to new results.' +
+          '<button type="button" class="btn btn-outline btn-sm" data-action="fast-forward">Simulate 2 weeks of results</button></div>'
+          : '') +
+      '</div>' +
+      '<div class="so-foot">The system recommends. You decide.</div>';
+  }
+
+  /* ============================== TOASTS ============================== */
+  function toast(msg){
+    const region = document.getElementById("toasts");
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.innerHTML = ICONS.check + '<span>'+esc(msg)+'</span>';
+    region.appendChild(el);
+    setTimeout(()=>{ el.style.transition="opacity .25s"; el.style.opacity="0"; setTimeout(()=>el.remove(), 260); }, 3400);
+  }
+
+  /* ============================== MASTER RENDER ============================== */
+  function updateRecommendation(){
+    const bands = {
+      capacityBand: CAPACITY_BAND[state.q.capacity],
+      frequencyBand: FREQUENCY_BAND[state.q.frequency],
+      sourcingBand: SOURCING_BAND[state.q.sourcing]
+    };
+    const rec = computeRecommendation(bands.capacityBand, bands.frequencyBand, bands.sourcingBand);
+    const prev = state.recommendation;
+    const changed = !prev || prev.mechanism !== rec.mechanism || prev.tier !== rec.tier;
+    state.recommendation = {
+      capacityBand: bands.capacityBand, frequencyBand: bands.frequencyBand, sourcingBand: bands.sourcingBand,
+      mechanism: rec.mechanism, tier: rec.tier, alternative: rec.alternative,
+      version: "v1",
+      timestamp: changed ? new Date().toISOString() : prev.timestamp
+    };
+    if(!state.planManuallyChosen){
+      state.chosenPlan = mechanismToPlanKey(rec.mechanism, rec.tier);
+    }
+  }
+
+  function render(){
+    updateRecommendation();
+    renderTopbar();
+    renderDisclaimer();
+    const content = document.getElementById("content");
+    const map = {
+      account: screenAccount,
+      aboutbusiness: screenAboutBusiness,
+      worktype: screenWorkType,
+      demandneeds: screenDemandNeeds,
+      demand: screenDemand,
+      plan: screenPlan,
+      payment: screenPayment,
+      workplan: screenWorkplan
+    };
+    content.innerHTML = '<div class="wrap'+(state.screen==="workplan"?" wide":"")+'">' + map[state.screen]() + '</div>';
+    if(state.screen === "workplan"){ renderDetail(); }
+    else { state.detailOpen=false; document.getElementById("overlay").classList.remove("show"); document.getElementById("slideover").classList.remove("show"); }
+  }
+
+  /* ============================== ACTIONS ============================== */
+  function setField(path, value){
+    const parts = path.split(".");
+    let obj = state;
+    for(let i=0;i<parts.length-1;i++) obj = obj[parts[i]];
+    obj[parts[parts.length-1]] = value;
+  }
+
+  document.addEventListener("input", function(e){
+    const f = e.target.getAttribute("data-field");
+    if(!f) return;
+    if(e.target.type === "checkbox"){ setField(f, e.target.checked); }
+    else { setField(f, e.target.value); }
+  }, true);
+
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest("[data-action]");
+    if(!btn) return;
+    const action = btn.getAttribute("data-action");
+    const value = btn.getAttribute("data-value");
+
+    switch(action){
+      case "dismiss-disclaimer": state.disclaimerDismissed = true; renderDisclaimer(); return;
+
+      case "create-account": state.screen = "aboutbusiness"; render(); window.scrollTo(0,0); return;
+      case "go-account": state.screen = "account"; render(); window.scrollTo(0,0); return;
+      case "go-aboutbusiness": state.screen = "aboutbusiness"; render(); window.scrollTo(0,0); return;
+      case "go-worktype": state.screen = "worktype"; render(); window.scrollTo(0,0); return;
+      case "go-demandneeds": state.screen = "demandneeds"; render(); window.scrollTo(0,0); return;
+      case "go-demand": state.screen = "demand"; render(); window.scrollTo(0,0); return;
+      case "go-plan": state.screen = "plan"; render(); window.scrollTo(0,0); return;
+      case "go-payment": state.screen = "payment"; render(); window.scrollTo(0,0); return;
+
+      case "toggle-multi": {
+        const field = btn.getAttribute("data-field");
+        const arr = state.q[field];
+        const idx = arr.indexOf(value);
+        if(idx>-1) arr.splice(idx,1); else arr.push(value);
+        render(); return;
+      }
+      case "set-radio": { state.q[btn.getAttribute("data-field")] = value; render(); return; }
+      case "set-radius": { state.q.radiusIndex = Number(value); render(); return; }
+
+      case "toggle-compare": state.compareOpen = !state.compareOpen; render(); return;
+      case "choose-plan": state.chosenPlan = value; state.planManuallyChosen = true; render(); return;
+
+      case "toggle-option": state.optionsOn[value] = !state.optionsOn[value]; render(); return;
+
+      case "pay-now":
+        state.payLoading = true; render();
+        setTimeout(()=>{
+          state.payLoading = false;
+          state.screen = "workplan";
+          state.workplanScenario = "leaking";
+          render();
+          if(state.firstWorkplanVisit){
+            state.firstWorkplanVisit = false;
+            toast("You're all set, "+state.account.owner.split(" ")[0]+". Here's a sample month so you can see Work Plan in action.");
+          }
+        }, 1200);
+        return;
+
+      case "set-scenario":
+        state.workplanScenario = value;
+        state.detailOpen = false;
+        render();
+        return;
+
+      case "open-detail": state.detailOpen = true; renderDetail(); return;
+      case "close-detail": state.detailOpen = false; renderDetail(); return;
+
+      case "apply-alt": {
+        if(value === "apply-alert"){
+          state.loopStage = "applied";
+          toast("Instant alerts turned on. We'll track your response time from your next enquiry.");
+          renderDetail();
+        } else if(value === "accept-expand"){
+          state.expandRequested = true;
+          toast("Got it, we've noted your interest in 6 additional PAYG enquiries.");
+          renderDetail();
+        } else if(value === "keep-monitoring"){
+          state.monitorAck = true;
+          toast("Sounds good, we'll check back at the end of this cycle.");
+          renderDetail();
+        } else {
+          toast("Noted, thanks for letting us know.");
+          renderDetail();
+        }
+        return;
+      }
+
+      case "talk-sales": {
+        toast("Your advisor has been notified and can see this recommendation and the evidence behind it.");
+        return;
+      }
+
+      case "fast-forward": {
+        const so = document.getElementById("slideover");
+        so.innerHTML = '<div class="so-head"><div><div class="eyebrow">Recommendation detail</div><h2 style="font-size:var(--typography-header-font-size-md);margin-top:5px;">Simulating your next 2 weeks&hellip;</h2></div></div><div class="center-loading"><div class="spinner"></div></div>';
+        setTimeout(()=>{
+          state.workplanScenario = "recovering";
+          state.loopStage = "recovered";
+          render();
+          state.detailOpen = true;
+          renderDetail();
+          toast("Work Plan updated with your last 2 weeks of activity.");
+        }, 1300);
+        return;
+      }
+    }
+  });
+
+  render();
+})();
+</script>
