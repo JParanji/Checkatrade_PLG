@@ -318,6 +318,10 @@
   .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--color-border-default);border-top-color:var(--color-blue-500);animation:spin .7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  /* ---- Success screen ---- */
+  .successwrap{display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:60vh;gap:var(--space-4);max-width:380px;margin:0 auto;}
+  .success-icon{width:64px;height:64px;border-radius:50%;background:var(--color-background-surface-feedback-success);color:var(--color-ink-feedback-success);display:flex;align-items:center;justify-content:center;flex:none;}
+
 </style>
 
 <header class="topbar" id="topbar"></header>
@@ -576,7 +580,6 @@
     payLoading:false,
     workplanScenario:"leaking",
     loopStage:"idle",
-    firstWorkplanVisit:true,
     detailOpen:false,
     disclaimerDismissed:false,
     compareOpen:false,
@@ -625,7 +628,7 @@
     }
 
     const slot = document.getElementById("step-indicator-slot");
-    if(state.screen === "account" || state.screen === "demand" || inApp){ slot.innerHTML = ""; return; }
+    if(state.screen === "account" || state.screen === "demand" || state.screen === "success" || inApp){ slot.innerHTML = ""; return; }
     const idx = stepIndexForScreen();
     slot.innerHTML = '<div class="step-indicator">' + ONBOARD_STEPS.map((s,i)=>{
       const cls = i===idx ? "active" : (i<idx ? "done" : "");
@@ -947,6 +950,16 @@
       stepFoot("Back", "go-plan", "Start your " + chosen.name + " plan — " + money2(grandTotal) + "/month including VAT", "pay-now", "secondary");
   }
 
+  /* ============================== SUCCESS (post-payment) ============================== */
+  function screenSuccess(){
+    return '<div class="successwrap">' +
+      '<div class="success-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      '<h1 class="page-h" style="margin-bottom:0;">You\'re all set!</h1>' +
+      '<p style="font-size:var(--typography-body-font-size-lg);color:var(--color-ink-body-subtle);line-height:1.6;">Your account is active. We\'ll start matching you with enquiries based on your plan and preferences.</p>' +
+      '<button type="button" class="btn btn-secondary btn-lg" style="margin-top:var(--space-2);" data-action="go-dashboard">Go to dashboard '+ICONS.arrow+'</button>' +
+    '</div>';
+  }
+
   /* ============================== SCREEN 7/8: WORK PLAN ============================== */
   function kpiTile(label, value, cmp, cmpTone){
     return '<div class="kpi"><div class="label">'+esc(label)+'</div><div class="value">'+value+'</div>'+(cmp?'<div class="cmp '+ (cmpTone||'') +'">'+cmp+'</div>':'')+'</div>';
@@ -1136,6 +1149,7 @@
       demand: screenDemand,
       plan: screenPlan,
       payment: screenPayment,
+      success: screenSuccess,
       workplan: screenWorkplan
     };
     content.innerHTML = '<div class="wrap'+(state.screen==="workplan"?" wide":"")+'">' + map[state.screen]() + '</div>';
@@ -1195,14 +1209,17 @@
         state.payLoading = true; render();
         setTimeout(()=>{
           state.payLoading = false;
-          state.screen = "workplan";
-          state.workplanScenario = "leaking";
+          state.screen = "success";
           render();
-          if(state.firstWorkplanVisit){
-            state.firstWorkplanVisit = false;
-            toast("You're all set, "+state.account.owner.split(" ")[0]+". Here's a sample month so you can see Work Plan in action.");
-          }
+          window.scrollTo(0,0);
         }, 1200);
+        return;
+
+      case "go-dashboard":
+        state.screen = "workplan";
+        state.workplanScenario = "leaking";
+        render();
+        window.scrollTo(0,0);
         return;
 
       case "set-scenario":
