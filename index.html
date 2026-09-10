@@ -96,7 +96,7 @@
 
   .wrap{max-width:780px;margin:0 auto;padding:var(--space-10) var(--space-6) 88px;}
   .wrap.wide{max-width:1080px;}
-  @media (max-width:640px){ .topbar{padding:var(--space-4) var(--space-5);} .step-indicator{padding:var(--space-6) var(--space-5);} .wrap{padding:var(--space-6) var(--space-4) 64px;} }
+  @media (max-width:640px){ .topbar{padding:var(--space-4) var(--space-5);} .step-indicator{padding:var(--space-6) var(--space-5);} .wrap{padding:var(--space-6) var(--space-4) 64px;} .democontrols{position:static;margin-left:0;width:100%;margin-top:var(--space-6);} .so-head,.so-body,.so-foot{padding-left:var(--space-4);padding-right:var(--space-4);} }
 
   h1.page-h{font-size:var(--typography-header-font-size-xl);line-height:var(--typography-header-line-height-xl);margin-bottom:var(--space-2);}
   .eyebrow{font-size:var(--typography-body-font-size-sm);font-weight:700;color:var(--color-ink-body-subtle);margin-bottom:var(--space-2);}
@@ -131,6 +131,8 @@
   }
   .field input:focus{border-color:var(--color-blue-400);}
   .field .validok{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--color-ink-feedback-success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--typography-body-font-size-xs);}
+  .field.error input{border-color:var(--color-ink-feedback-error);}
+  .field .errormsg{color:var(--color-ink-feedback-error);font-weight:400;font-size:var(--typography-body-font-size-xs);margin-top:2px;}
   .checkrow{display:flex;align-items:flex-start;gap:9px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);font-weight:400;}
   .checkrow input{margin-top:3px;}
 
@@ -180,7 +182,8 @@
   .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
   .kpi-grid .kpi{min-width:0;}
   .kpi .value{overflow-wrap:break-word;}
-  @media (max-width:800px){ .grid-2,.grid-3{grid-template-columns:1fr;} }
+  @media (max-width:800px){ .grid-2{grid-template-columns:1fr;} .grid-3{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .grid-3{grid-template-columns:1fr;} }
 
   .stepfoot{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-10);padding-top:var(--space-6);border-top:1px solid var(--color-border-default);gap:12px;flex-wrap:wrap;}
 
@@ -337,7 +340,7 @@
   <p>All company, contact and legal details shown are illustrative and not for real-world use.</p>
 </footer>
 <div class="overlay" id="overlay" data-action="close-detail"></div>
-<div class="slideover" id="slideover"></div>
+<div class="slideover" id="slideover" role="dialog" aria-modal="true" aria-label="Recommendation detail"></div>
 <div class="toastregion" id="toasts"></div>
 
 <script>
@@ -549,6 +552,10 @@
     if(mechanism === "BOARD") return "board";
     return "approved";
   }
+  function planDisplayName(key){
+    const p = DATA.plans[key];
+    return key.indexOf("fixed") === 0 ? "Fixed · " + p.name : p.name;
+  }
   function shortReasons(bands){
     const capShort = {
       NONE:"You don't have spare capacity for new work right now",
@@ -568,7 +575,7 @@
   /* ============================== STATE ============================== */
   const state = {
     screen:"account",
-    account:{ owner:DATA.persona.owner, email:"", mobile:"", password:"", terms:true },
+    account:{ owner:DATA.persona.owner, email:"dave@whitlockplumbing.co.uk", mobile:"07700 900123", password:"Checkatrade2026!", terms:true },
     q:{ business:DATA.persona.business, bizType:"self", team:"Just me",
         trade:"Plumbing & Heating", worktypes:DATA.worktypeOptions.slice(),
         postcode:"RG1", radiusIndex:4,
@@ -576,10 +583,14 @@
     chosenPlan:"fixedMedium",
     planManuallyChosen:false,
     recommendation:null,
-    optionsOn:{ directory:true, sponsored:false, board:false },
+    recSwitchDismissedFor:null,
+    formErrors:{},
+    optionsOn:{ directory:false, sponsored:false },
     payLoading:false,
     workplanScenario:"leaking",
     loopStage:"idle",
+    expandRequested:false,
+    monitorAck:false,
     detailOpen:false,
     disclaimerDismissed:false,
     compareOpen:false,
@@ -590,6 +601,11 @@
   function money(n){ return "£" + Number(n).toLocaleString("en-GB"); }
   function money2(n){ return "£" + Number(n).toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2}); }
   const VAT_RATE = 0.2;
+
+  function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function isValidMobile(v){ return /^0\d{9,10}$/.test(v.replace(/\s/g,'')); }
+  function isValidPassword(v){ return v.length >= 8; }
+  function isValidPostcode(v){ return /^[A-Za-z]{1,2}\d[A-Za-z\d]?(\s*\d[A-Za-z]{2})?$/.test(v.trim()); }
 
   /* ============================== ICONS (Lucide-style outline, per design-system iconography notes) ============================== */
   const ICONS = {
@@ -618,7 +634,7 @@
       el.innerHTML =
         '<img class="logo" src="'+LOGO+'" alt="Checkatrade">' +
         '<div class="app-right">' +
-          '<span class="plan-tag">'+(state.chosenPlan.indexOf("fixed")===0?"Fixed &middot; ":"")+esc(DATA.plans[state.chosenPlan].name)+'</span>' +
+          '<span class="plan-tag">'+esc(planDisplayName(state.chosenPlan))+'</span>' +
           '<div class="biz-pill"><span class="biz-avatar">'+DATA.persona.initials+'</span>'+esc(state.q.business)+'</div>' +
         '</div>';
     } else {
@@ -668,9 +684,9 @@
         '<div class="eyebrow">Step 1 of 6</div>' +
         '<h2 class="page-h" style="margin-bottom:22px;">Create your account</h2>' +
         '<form id="account-form">' +
-          '<label class="field">Email<div class="inputwrap"><input type="email" data-field="account.email" placeholder="dave@whitlockplumbing.co.uk" value="'+esc(a.email)+'"></div></label>' +
-          '<label class="field">Mobile<div class="inputwrap"><input type="tel" data-field="account.mobile" placeholder="07700 900123" value="'+esc(a.mobile)+'"></div></label>' +
-          '<label class="field">Password<div class="inputwrap"><input type="password" data-field="account.password" placeholder="Choose a password" value="'+esc(a.password)+'"></div></label>' +
+          '<label class="field'+(state.formErrors.email?' error':'')+'">Email<div class="inputwrap"><input type="email" data-field="account.email" placeholder="dave@whitlockplumbing.co.uk" value="'+esc(a.email)+'"></div>'+(state.formErrors.email?'<span class="errormsg">'+esc(state.formErrors.email)+'</span>':'')+'</label>' +
+          '<label class="field'+(state.formErrors.mobile?' error':'')+'">Mobile<div class="inputwrap"><input type="tel" data-field="account.mobile" placeholder="07700 900123" value="'+esc(a.mobile)+'"></div>'+(state.formErrors.mobile?'<span class="errormsg">'+esc(state.formErrors.mobile)+'</span>':'')+'</label>' +
+          '<label class="field'+(state.formErrors.password?' error':'')+'">Password<div class="inputwrap"><input type="password" data-field="account.password" placeholder="Choose a password" value="'+esc(a.password)+'"></div>'+(state.formErrors.password?'<span class="errormsg">'+esc(state.formErrors.password)+'</span>':'')+'</label>' +
           '<label class="checkrow"><input type="checkbox" data-field="account.terms" '+(a.terms?'checked':'')+'> I agree to the Terms and Privacy Policy</label>' +
           '<button type="button" class="btn btn-secondary btn-lg btn-block" style="margin-top:6px;" data-action="create-account">Create my account</button>' +
           '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);text-align:center;">Takes about 2 minutes. No payment needed to see what\'s available.</p>' +
@@ -680,27 +696,27 @@
   }
 
   /* ============================== SCREENS 2–4: ABOUT YOUR BUSINESS / LOCAL AREA / WORK TYPE ============================== */
-  function radioCardRow(field, options){
-    return '<div class="stack">' + options.map(o=>{
+  function radioCardRow(field, options, groupLabel){
+    return '<div class="stack" role="radiogroup" aria-label="'+esc(groupLabel||field)+'">' + options.map(o=>{
       const on = state.q[field] === o;
-      return '<button type="button" class="radiocard '+(on?'on':'')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o)+'">' +
+      return '<button type="button" class="radiocard '+(on?'on':'')+'" role="radio" aria-checked="'+(on?'true':'false')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o)+'">' +
         '<span class="dot"></span><span class="lbl">'+esc(o)+'</span>' +
       '</button>';
     }).join('') + '</div>';
   }
-  function radioCardRowRich(field, options){
-    return '<div class="stack">' + options.map(o=>{
+  function radioCardRowRich(field, options, groupLabel){
+    return '<div class="stack" role="radiogroup" aria-label="'+esc(groupLabel||field)+'">' + options.map(o=>{
       const on = state.q[field] === o.value;
-      return '<button type="button" class="radiocard '+(on?'on':'')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o.value)+'">' +
+      return '<button type="button" class="radiocard '+(on?'on':'')+'" role="radio" aria-checked="'+(on?'true':'false')+'" data-action="set-radio" data-field="'+field+'" data-value="'+esc(o.value)+'">' +
         '<span class="dot"></span><span class="lblwrap"><span class="lbl">'+esc(o.label)+'</span><span class="sub">'+esc(o.desc)+'</span></span>' +
       '</button>';
     }).join('') + '</div>';
   }
-  function checkboxRow(field, options){
+  function checkboxRow(field, options, groupLabel){
     const cur = state.q[field];
-    return '<div class="stack">' + options.map(o=>{
+    return '<div class="stack" role="group" aria-label="'+esc(groupLabel||field)+'">' + options.map(o=>{
       const on = cur.includes(o);
-      return '<button type="button" class="cb-row '+(on?'on':'')+'" data-action="toggle-multi" data-field="'+field+'" data-value="'+esc(o)+'">' +
+      return '<button type="button" class="cb-row '+(on?'on':'')+'" role="checkbox" aria-checked="'+(on?'true':'false')+'" data-action="toggle-multi" data-field="'+field+'" data-value="'+esc(o)+'">' +
         '<span class="cb-swatch">'+(on?ICONS.check:'')+'</span><span>'+esc(o)+'</span>' +
       '</button>';
     }).join('') + '</div>';
@@ -717,17 +733,17 @@
         '<label class="field">Your name<div class="inputwrap"><input type="text" data-field="account.owner" value="'+esc(state.account.owner)+'"></div></label>' +
         '<div>' +
           '<div class="qtitle">Your postcode</div>' +
-          '<label class="field"><div class="inputwrap">' +
+          '<label class="field'+(state.formErrors.postcode?' error':'')+'"><div class="inputwrap">' +
             '<input type="text" data-field="q.postcode" value="'+esc(state.q.postcode)+'">' +
-            '<span class="validok">'+ICONS.check+'</span>' +
-          '</div></label>' +
+            (isValidPostcode(state.q.postcode) ? '<span class="validok">'+ICONS.check+'</span>' : '') +
+          '</div>'+(state.formErrors.postcode?'<span class="errormsg">'+esc(state.formErrors.postcode)+'</span>':'')+'</label>' +
         '</div>' +
         '<div>' +
           '<div class="qtitle">How far would you like to travel for work?</div>' +
           '<div class="cs-slider">' +
-            '<div class="track">' +
+            '<div class="track" role="group" aria-label="How far would you like to travel for work">' +
               '<div class="fill" style="width:'+pct+'%;"></div>' +
-              RADIUS_STEPS.map((s,i)=>'<button type="button" class="dot '+(i<=r?'on':'')+'" data-action="set-radius" data-value="'+i+'" style="left:'+(i/(RADIUS_STEPS.length-1)*100)+'%;"></button>').join('') +
+              RADIUS_STEPS.map((s,i)=>'<button type="button" class="dot '+(i<=r?'on':'')+'" aria-label="'+esc(s)+(i===r?', selected':'')+'" data-action="set-radius" data-value="'+i+'" style="left:'+(i/(RADIUS_STEPS.length-1)*100)+'%;"></button>').join('') +
             '</div>' +
             '<div class="labels">' + RADIUS_STEPS.map(s=>'<span>'+s+'</span>').join('') + '</div>' +
           '</div>' +
@@ -735,14 +751,14 @@
         '</div>' +
         '<div>' +
           '<div class="qtitle">What type of business are you?</div>' +
-          radioCardRowRich("bizType", DATA.bizTypes) +
+          radioCardRowRich("bizType", DATA.bizTypes, "What type of business are you?") +
         '</div>' +
         '<div>' +
           '<div class="qtitle">Team size</div>' +
-          radioCardRow("team", ["Just me","2–4 people","5+ people"]) +
+          radioCardRow("team", ["Just me","2–4 people","5+ people"], "Team size") +
         '</div>' +
       '</div>' +
-      stepFoot("Back", "go-account", "Continue", "go-worktype", "primary");
+      stepFoot("Back", "go-account", "Continue", "continue-aboutbusiness", "primary");
   }
 
   function screenWorkType(){
@@ -751,33 +767,34 @@
       '<div class="qgroup">' +
         '<div>' +
           '<div class="qtitle">What type of trade are you?</div>' +
-          radioCardRow("trade", DATA.trades) +
+          radioCardRow("trade", DATA.trades, "What type of trade are you?") +
         '</div>' +
         '<div>' +
           '<div class="qtitle">What types of work would you like to receive?</div>' +
-          checkboxRow("worktypes", DATA.worktypeOptions) +
-          '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">You can change these later.</p>' +
+          checkboxRow("worktypes", DATA.worktypeOptions, "What types of work would you like to receive?") +
+          (state.formErrors.worktypes ? '<p class="errormsg" style="margin-top:var(--space-3);">'+esc(state.formErrors.worktypes)+'</p>' : '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">You can change these later.</p>') +
         '</div>' +
       '</div>' +
-      stepFoot("Back", "go-aboutbusiness", "Continue", "go-demandneeds", "primary");
+      stepFoot("Back", "go-aboutbusiness", "Continue", "continue-worktype", "primary");
   }
 
   function screenDemandNeeds(){
     return '<div class="eyebrow">Step 4 of 6</div>' +
       '<h1 class="page-h">Your demand needs</h1>' +
+      '<p class="lede" style="margin-top:6px;">We use your answers to these three questions to match you with a plan and a way of receiving enquiries that fits how you actually work — nothing here changes what you can do on Checkatrade.</p>' +
       '<div class="qgroup">' +
         '<div>' +
           '<div class="qtitle">How much capacity do you normally have for new jobs per month?</div>' +
-          radioCardRow("capacity", CAPACITY_OPTIONS) +
+          radioCardRow("capacity", CAPACITY_OPTIONS, "How much capacity do you normally have for new jobs per month?") +
           '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;">Think about a typical month rather than this week.</p>' +
         '</div>' +
         '<div>' +
           '<div class="qtitle">How often would you ideally like new enquiries?</div>' +
-          radioCardRow("frequency", FREQUENCY_OPTIONS) +
+          radioCardRow("frequency", FREQUENCY_OPTIONS, "How often would you ideally like new enquiries?") +
         '</div>' +
         '<div>' +
           '<div class="qtitle">How would you prefer to find new work?</div>' +
-          radioCardRow("sourcing", SOURCING_OPTIONS) +
+          radioCardRow("sourcing", SOURCING_OPTIONS, "How would you prefer to find new work?") +
         '</div>' +
       '</div>' +
       stepFoot("Back", "go-worktype", "See local jobs", "go-demand", "primary");
@@ -833,7 +850,7 @@
       priceMain = "£18–£45"; priceSub = "per accepted enquiry + VAT";
       body =
         '<span class="badge badge-neutral" style="margin-top:6px;">No upfront monthly fee</span>' +
-        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;">Pay only when you receive an enquiry.</p>';
+        '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);margin-top:8px;">Pay only when you accept an enquiry.</p>';
     } else if(key === "approved"){
       priceMain = p.price; priceSub = p.sub;
       body =
@@ -854,7 +871,7 @@
 
     return '<div class="plancard '+(chosen?'chosen':'')+'" style="position:relative;">' +
       badge +
-      '<div style="margin-top:'+(tag?'10px':'0')+';"><b>'+p.name+(isFixed?' Fixed':'')+'</b></div>' +
+      '<div style="margin-top:'+(tag?'10px':'0')+';"><b>'+esc(planDisplayName(key))+'</b></div>' +
       '<div class="plan-price">'+priceMain+'<small><br>'+priceSub+'</small></div>' +
       body +
       '<button type="button" class="btn '+(chosen?'btn-secondary':'btn-outline')+' btn-sm btn-block" style="margin-top:10px;" data-action="choose-plan" data-value="'+key+'">'+cta+'</button>' +
@@ -866,11 +883,23 @@
     return '<div class="optioncard '+(o.recommended?'':'muted')+'">' +
       '<div class="opt-top">' +
         '<div><div style="font-weight:700;font-size:var(--typography-body-font-size-lg);">'+esc(o.name)+'</div><div class="opt-price">'+o.price+'</div></div>' +
-        '<button class="toggle '+(on?'on':'')+'" data-action="toggle-option" data-value="'+key+'" aria-label="Toggle '+esc(o.name)+'"></button>' +
+        '<button class="toggle '+(on?'on':'')+'" data-action="toggle-option" data-value="'+key+'" aria-label="Toggle '+esc(o.name)+'" aria-pressed="'+(on?'true':'false')+'"></button>' +
       '</div>' +
       '<span class="badge '+(o.recommended?'badge-brand':'badge-neutral')+'">'+(o.recommended?ICONS.check+' Recommended':'Not recommended right now')+'</span>' +
       '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.55;">'+esc(o.why)+'</p>' +
       (o.note ? '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);line-height:1.5;">'+esc(o.note)+'</p>' : '') +
+    '</div>';
+  }
+  function recSwitchBanner(rec, recKey){
+    if(!state.planManuallyChosen) return "";
+    if(recKey === state.chosenPlan) return "";
+    if(state.recSwitchDismissedFor === recKey) return "";
+    return '<div class="card soft" style="margin-top:var(--space-4);border:1px solid var(--color-border-action-brand-secondary);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+      '<p style="font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-default);max-width:52ch;"><b>Your answers have changed.</b> Based on your latest answers, we\'d now recommend the <b>'+esc(planDisplayName(recKey))+'</b> plan instead of your selected <b>'+esc(planDisplayName(state.chosenPlan))+'</b> plan.</p>' +
+      '<div style="display:flex;gap:8px;flex:none;">' +
+        '<button type="button" class="btn btn-outline btn-sm" data-action="dismiss-rec-switch" data-value="'+recKey+'">Keep my plan</button>' +
+        '<button type="button" class="btn btn-secondary btn-sm" data-action="switch-to-rec" data-value="'+recKey+'">Switch to '+esc(planDisplayName(recKey))+'</button>' +
+      '</div>' +
     '</div>';
   }
   function screenPlan(){
@@ -889,21 +918,24 @@
     if(state.optionsOn.sponsored) total += 100;
     const reasons = shortReasons(bands);
     const otherAndAlt = [altKey].concat(otherKeys);
+    const anyFixedVisible = primaryKeys.some(k=>k.indexOf("fixed")===0) || (state.compareOpen && otherAndAlt.some(k=>k.indexOf("fixed")===0));
 
     return '<div class="eyebrow">Step 5 of 6</div>' +
       '<h1 class="page-h">Your plan</h1>' +
+      recSwitchBanner(rec, recKey) +
       '<div class="eyebrow" style="margin-top:var(--space-6);">Your recommended plan</div>' +
       (primaryKeys.length===3 ?
-        '<div class="grid grid-3" style="margin-top:var(--space-3);align-items:start;">' + primaryKeys.map(k=>planOptionCard(k, k===recKey?"recommended":null)).join('') + '</div>' +
-        '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">*Your monthly price stays fixed. Enquiry volume can vary — this is an estimate, not a guarantee.</p>'
+        '<div class="grid grid-3" style="margin-top:var(--space-3);align-items:start;">' + primaryKeys.map(k=>planOptionCard(k, k===recKey?"recommended":null)).join('') + '</div>'
         : '<div style="margin-top:var(--space-3);max-width:340px;">' + planOptionCard(primaryKeys[0], "recommended") + '</div>') +
       '<div class="qtitle" style="margin-top:var(--space-6);margin-bottom:8px;">Why this fits</div>' +
       '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">' +
         reasons.map(r=>'<li style="display:flex;gap:8px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);"><span style="color:var(--color-ink-feedback-success);flex:none;">'+ICONS.check+'</span>'+esc(r)+'</li>').join('') +
       '</ul>' +
+      '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">This is based on the preferences you\'ve told us — we\'ll refine it once we see how you actually respond to enquiries.</p>' +
       '<button class="btn btn-ghost btn-sm" data-action="toggle-compare" style="margin-top:var(--space-6);" type="button">'+(state.compareOpen?'Hide other options':'See other options')+' '+ICONS.chevron+'</button>' +
       (state.compareOpen ? '<div class="eyebrow" style="margin-top:var(--space-4);margin-bottom:0;">Other options</div>' +
-        '<div class="grid grid-2" style="margin-top:var(--space-3);">' + otherAndAlt.map(k=>planOptionCard(k, null)).join('') + '</div>' : '') +
+        '<div class="grid grid-2" style="margin-top:var(--space-3);">' + otherAndAlt.map(k=>planOptionCard(k, k===altKey?"alternative":null)).join('') + '</div>' : '') +
+      (anyFixedVisible ? '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:var(--space-3);">*Your monthly price stays fixed. Enquiry volume can vary — this is an estimate, not a guarantee.</p>' : '') +
       '<div class="eyebrow" style="margin-top:var(--space-8);margin-bottom:0;">Optional extras</div>' +
       '<div class="grid grid-2" style="margin-top:var(--space-3);">' + ["directory","sponsored"].map(optionCard).join('') + '</div>' +
       '<div class="card soft" style="margin-top:var(--space-4);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">' +
@@ -917,7 +949,7 @@
     const chosen = DATA.plans[state.chosenPlan];
     const planPrice = chosen.priceNum;
     let total = planPrice;
-    const items = [[chosen.name + " plan", planPrice]];
+    const items = [[planDisplayName(state.chosenPlan) + " plan", planPrice]];
     if(state.optionsOn.directory){ items.push(["Directory & profile premium", 15]); total+=15; }
     if(state.optionsOn.sponsored){ items.push(["Sponsored placement", 100]); total+=100; }
     const vat = Math.round(total * VAT_RATE * 100) / 100;
@@ -947,7 +979,7 @@
           '</div>' +
         '</div>' +
       '</div>' +
-      stepFoot("Back", "go-plan", "Start your " + chosen.name + " plan — " + money2(grandTotal) + "/month including VAT", "pay-now", "secondary");
+      stepFoot("Back", "go-plan", "Start your " + planDisplayName(state.chosenPlan) + " plan — " + money2(grandTotal) + "/month including VAT", "pay-now", "secondary");
   }
 
   /* ============================== SUCCESS (post-payment) ============================== */
@@ -1003,8 +1035,9 @@
         '<div class="recbanner-icon">'+icon+'</div>' +
         '<div style="flex:1;min-width:220px;">' +
           '<div class="eyebrow" style="margin-bottom:2px;">Your recommendation</div>' +
-          '<h2 style="font-size:var(--typography-header-font-size-lg);">'+esc(rec.whatWedDo)+'</h2>' +
+          '<h2 style="font-size:var(--typography-header-font-size-lg);">'+esc(rec.bannerTitle)+'</h2>' +
           '<p style="margin-top:4px;">'+esc(rec.bannerBody)+'</p>' +
+          '<p style="margin-top:6px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);">'+esc(rec.whatWedDo)+'</p>' +
         '</div>' +
       '</div>' +
       '<div class="eyebrow" style="margin-top:var(--space-6);">Based on your results</div>' +
@@ -1095,6 +1128,7 @@
           '<ul style="margin:8px 0 0;padding-left:18px;font-size:var(--typography-body-font-size-sm);color:var(--color-ink-body-subtle);line-height:1.7;">' +
             RECS.sales.usefulWhen.map(t=>'<li>'+esc(t)+'</li>').join('') +
           '</ul>' +
+          '<p style="font-size:var(--typography-body-font-size-xs);color:var(--color-ink-body-subtle);margin-top:9px;line-height:1.6;"><b>How this works:</b> Checkatrade\'s system handles clear, standard cases like this one directly from the evidence above. '+esc(RECS.sales.overrideNote)+'</p>' +
           '<button type="button" class="btn btn-outline btn-sm" style="margin-top:var(--space-3);" data-action="talk-sales">Talk to your advisor</button>' +
         '</div>' +
         (showFastForward ?
@@ -1170,7 +1204,28 @@
     if(!f) return;
     if(e.target.type === "checkbox"){ setField(f, e.target.checked); }
     else { setField(f, e.target.value); }
+    const key = f.split(".").pop();
+    if(state.formErrors[key]){
+      const validators = { email:()=>isValidEmail(state.account.email), mobile:()=>isValidMobile(state.account.mobile), password:()=>isValidPassword(state.account.password), postcode:()=>isValidPostcode(state.q.postcode) };
+      if(validators[key] && validators[key]()){
+        delete state.formErrors[key];
+        const field = e.target.closest(".field");
+        if(field){
+          field.classList.remove("error");
+          const msg = field.querySelector(".errormsg");
+          if(msg) msg.remove();
+          if(key === "postcode" && !field.querySelector(".validok")){
+            const wrap = field.querySelector(".inputwrap");
+            if(wrap) wrap.insertAdjacentHTML("beforeend", '<span class="validok">'+ICONS.check+'</span>');
+          }
+        }
+      }
+    }
   }, true);
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && state.detailOpen){ state.detailOpen = false; renderDetail(); }
+  });
 
   document.addEventListener("click", function(e){
     const btn = e.target.closest("[data-action]");
@@ -1181,10 +1236,28 @@
     switch(action){
       case "dismiss-disclaimer": state.disclaimerDismissed = true; renderDisclaimer(); return;
 
-      case "create-account": state.screen = "aboutbusiness"; render(); window.scrollTo(0,0); return;
+      case "create-account": {
+        const errs = {};
+        if(!isValidEmail(state.account.email)) errs.email = "Enter a valid email address.";
+        if(!isValidMobile(state.account.mobile)) errs.mobile = "Enter a valid UK mobile number.";
+        if(!isValidPassword(state.account.password)) errs.password = "Password must be at least 8 characters.";
+        state.formErrors = errs;
+        if(Object.keys(errs).length){ render(); return; }
+        state.screen = "aboutbusiness"; render(); window.scrollTo(0,0); return;
+      }
       case "go-account": state.screen = "account"; render(); window.scrollTo(0,0); return;
       case "go-aboutbusiness": state.screen = "aboutbusiness"; render(); window.scrollTo(0,0); return;
+      case "continue-aboutbusiness": {
+        if(!isValidPostcode(state.q.postcode)){ state.formErrors = {postcode:"Enter a valid UK postcode."}; render(); return; }
+        state.formErrors = {};
+        state.screen = "worktype"; render(); window.scrollTo(0,0); return;
+      }
       case "go-worktype": state.screen = "worktype"; render(); window.scrollTo(0,0); return;
+      case "continue-worktype": {
+        if(!state.q.worktypes.length){ state.formErrors = {worktypes:"Select at least one type of work."}; render(); return; }
+        state.formErrors = {};
+        state.screen = "demandneeds"; render(); window.scrollTo(0,0); return;
+      }
       case "go-demandneeds": state.screen = "demandneeds"; render(); window.scrollTo(0,0); return;
       case "go-demand": state.screen = "demand"; render(); window.scrollTo(0,0); return;
       case "go-plan": state.screen = "plan"; render(); window.scrollTo(0,0); return;
@@ -1195,6 +1268,7 @@
         const arr = state.q[field];
         const idx = arr.indexOf(value);
         if(idx>-1) arr.splice(idx,1); else arr.push(value);
+        if(field === "worktypes" && arr.length && state.formErrors.worktypes){ delete state.formErrors.worktypes; }
         render(); return;
       }
       case "set-radio": { state.q[btn.getAttribute("data-field")] = value; render(); return; }
@@ -1202,6 +1276,8 @@
 
       case "toggle-compare": state.compareOpen = !state.compareOpen; render(); return;
       case "choose-plan": state.chosenPlan = value; state.planManuallyChosen = true; render(); return;
+      case "dismiss-rec-switch": state.recSwitchDismissedFor = value; render(); return;
+      case "switch-to-rec": state.chosenPlan = value; state.planManuallyChosen = true; state.recSwitchDismissedFor = null; render(); return;
 
       case "toggle-option": state.optionsOn[value] = !state.optionsOn[value]; render(); return;
 
@@ -1228,8 +1304,8 @@
         render();
         return;
 
-      case "open-detail": state.detailOpen = true; renderDetail(); return;
-      case "close-detail": state.detailOpen = false; renderDetail(); return;
+      case "open-detail": state.detailOpen = true; renderDetail(); document.getElementById("slideover").querySelector(".so-close")?.focus(); return;
+      case "close-detail": state.detailOpen = false; renderDetail(); document.querySelector('[data-action="open-detail"]')?.focus(); return;
 
       case "apply-alt": {
         if(value === "apply-alert"){
@@ -1265,7 +1341,9 @@
           render();
           state.detailOpen = true;
           renderDetail();
-          toast("Work Plan updated with your last 2 weeks of activity.");
+          const beforeRate = DATA.workplan.leaking.responseRatePct;
+          const afterRate = DATA.workplan.recovering.responseRatePct;
+          toast("Simulated: your response rate moved from "+beforeRate+"% to "+afterRate+"% over the last 2 weeks. We'll keep observing before recommending a change.");
         }, 1300);
         return;
       }
